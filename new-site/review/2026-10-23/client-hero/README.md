@@ -1,5 +1,9 @@
 # Transparent client row in the hero
 
+Latest follow-up: [automatic scrolling and reload position](automatic-scroll.md).
+Hover/touch no longer stops the row; manual scrolling was removed. Reloads start
+at the top. The earlier implementation and checks below are historical.
+
 23 October 2026. The user requested the missing client row, then asked to place
 it in the hero, remove its Pause button and restore the earlier transparent
 appearance. The existing 21 prepared wordmarks are reused with their original

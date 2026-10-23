@@ -28,9 +28,9 @@ earlier transparent single-colour treatment and asked to remove the Pause
 button. Reuse the existing 21 transparent wordmarks without white cards. Keep
 original proportions and quiet ink opacity. Other original marks remain in
 source. One CSS transform drives the loop, resting off-screen/when hidden.
-Hover, focus, touch or wheel interaction permanently stops automatic movement
-and exposes native horizontal browsing without a visual jump. Reduced motion
-and missing scripts retain a static, manually scrollable row. Do not add inferred
+The latest user request keeps the loop automatic during hover, touch, clicks
+and wheel input. No manual scrolling or Pause controls are exposed. Reduced
+motion and missing scripts show every logo in a static wrapped list. Do not add inferred
 client relationships.
 
 ## Colour and surfaces
@@ -74,6 +74,8 @@ shadows. Use the existing z-index scale for sticky, overlay and modal content.
 
 The latest user-approved opening is automatic on a fresh load/reload. It is a
 bounded handoff, with immediate visitor interruption and no replay on scroll.
+Every reload resets the current page to the top. Clear the fragment on reload
+so home can start its opening; first-time deep links and Back/Forward still work.
 
 | Moment | Current behaviour |
 |---|---|

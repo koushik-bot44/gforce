@@ -1,10 +1,17 @@
 # G-Force IT: opening, media and final review
 
 23 October 2026. Latest follow-up: restored the client-company row inside the
-hero below its actions. The user then selected the earlier transparent
+hero below its actions. The latest request keeps its scrolling automatic on
+hover/touch/click, with no manual scrolling. Reduced motion/no JavaScript shows
+a static wrapped list. Reloads now reset the current page to the top and home
+restarts its opening, retaining the route/query but clearing a reload fragment.
+This supersedes the interaction-stopping behaviour in
+the earlier client-row test report. [Current automatic-scroll and reload
+verification](review/2026-10-23/client-hero/automatic-scroll.md) records eight
+client cases and ten reload cases across Chrome/WebKit, all passing. The user previously selected the transparent
 single-colour logo treatment and requested no Pause button. The 21 existing
-prepared wordmarks are reused without white cards. Direct interaction stops the
-loop and exposes native browsing; reduced motion remains still. The original
+prepared wordmarks are reused without white cards. The loop rests off-screen and when the tab is hidden.
+The original
 28-company list and assets remain in source. The business page shares this row.
 Sample figures/testimonials/cases remain omitted. This supersedes the older
 omission of the client strip described below.
@@ -100,8 +107,9 @@ the poster and completed in about three seconds; its startup still recorded
 172/59/65ms long tasks before movement. These are lab measurements, not a promise
 for every physical phone.
 
-Latest production-preview Lighthouse, with the automatic intro and transparent
-client row enabled:
+Production-preview Lighthouse with the intro and transparent client row. Mobile
+was repeated after the automatic-scrolling/reload update; desktop is from the
+preceding style pass:
 
 | Profile | Performance | Accessibility | Best practices | SEO | LCP | TBT | CLS |
 |---|---:|---:|---:|---:|---:|---:|---:|

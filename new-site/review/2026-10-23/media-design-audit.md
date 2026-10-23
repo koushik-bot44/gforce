@@ -3,7 +3,7 @@
 23 October 2026. Follow-up: the user requested the client row in the hero, then
 selected the earlier transparent single-colour marks and removed its Pause
 button. The 21 prepared wordmarks now fill that space without white cards;
-interaction exposes manual browsing. This supersedes the earlier client-row
+the latest direction keeps scrolling automatic through interaction. This supersedes the earlier client-row
 omission in the body of this review. [Current evidence](client-hero/browser-results.json).
 
 Reviewed the rendered site, all 15 routes at 1440×900 and
@@ -88,7 +88,7 @@ and [current sheet](design/media-after.jpg).
 |---|---:|---|
 | Original logo: header/footer/social artwork | 9.5 → 9.5 | Retain exact supplied artwork and proportions. It is the company identity. |
 | Glass wordmark: homepage opening | 8.3 → 9 | Retain original outlines. Entire name is visible; animated handoff now has a useful endpoint. |
-| Client-company wordmarks: hero/business | Missing → 9 | Reuses the 21 prepared transparent marks from the original list, without white cards or a Pause button. Original proportions retained; direct interaction stops motion for browsing. |
+| Client-company wordmarks: hero/business | Missing → 9 | Reuses the 21 prepared transparent marks from the original list, without white cards or a Pause button. Original proportions retained; motion continues during hover/touch, with no manual scrolling. |
 | Photographic dawn/cloud field: hero | 8.8 → 8.8 | Retain as atmosphere, following the reference's pale blue/apricot depth. It does not describe a computing service. |
 | Photographic deep sky: inner hero bands/footer | 8.6 → 8.6 | Retain with overlays for readable type and continuity. |
 | `sky-daylight`: dawn atmosphere | 8.8 → 8.8 | Appropriate decorative weather imagery here; mobile can use the poster. Brief motion ends instead of looping. |

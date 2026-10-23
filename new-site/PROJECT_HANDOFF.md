@@ -27,6 +27,8 @@ no-red and script-wordmark choices are superseded. Archivo carries the interface
   rotates, shrinks and lifts away as the hero message moves into place. One rAF
   owns both transforms; visitor input ends it immediately. Completion removes
   the artwork and disposes the live scene. Scrolling back does not replay it.
+  Every reload now resets the current page to the top and clears a reload
+  fragment while preserving the route/query, so home restarts the introduction.
 - Eligible devices prepare WebGL only for the bounded opening. Quantized
   geometry and a prepared environment atlas replace runtime extrusion/baking.
   Reduced motion skips the intro; Save-Data/constrained/failed WebGL use a poster.
@@ -40,7 +42,9 @@ no-red and script-wordmark choices are superseded. Archivo carries the interface
   user requested the client row in the hero beneath the actions, then selected
   the earlier transparent single-colour marks and removed the Pause button. The
   21 prepared marks are reused; the complete original list remains in source.
-  The business page also includes this shared row. The dawn tabs describe service workflows; they do not simulate client
+  The latest request removes interaction-based stopping and manual scrolling;
+  the row remains automatic on hover/touch/click. Reduced motion/no JavaScript
+  uses a static wrapped list. The business page shares this row. The dawn tabs describe service workflows; they do not simulate client
   outcomes or expose Example/Replay controls.
 - Services, training filters, health check, downtime calculator, resources,
   contact paths, consent, dark mode and licensed media remain in the application.

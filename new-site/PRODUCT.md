@@ -32,7 +32,9 @@ mobile/desktop, delayed JavaScript, restored scroll positions and motion fallbac
   partner credentials. Sample proof stays archived, including the 90% outages
   claim. The user requested the original client-company list be restored in the
   hero. Their latest direction selects the earlier 21 transparent single-colour
-  marks and removes the Pause button. Retain the supplied company names.
+  marks and removes the Pause button. Their latest request keeps the row
+  automatic during hover/touch and removes manual scrolling. Retain the supplied
+  company names.
   This does not authorise adding inferred client relationships.
 - Do not present stock people as G-Force employees or customer testimonial authors.
   Use licensed imagery and preserve the credits.

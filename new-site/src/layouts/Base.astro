@@ -110,6 +110,37 @@ const websiteLd = {
       (() => {
         const d = document.documentElement;
         d.classList.add('js');
+        const navigation = performance.getEntriesByType('navigation')[0];
+        if (navigation?.type === 'reload') {
+          // Reset before the browser restores the previous page position or
+          // follows a fragment, so the home introduction starts at its first frame.
+          history.scrollRestoration = 'manual';
+          if (location.hash) history.replaceState(history.state, '', location.pathname + location.search);
+          scrollTo({ top: 0, left: 0, behavior: 'instant' });
+          let resetting = true;
+          const resetTop = () => {
+            if (resetting && (scrollY || scrollX)) scrollTo({ top: 0, left: 0, behavior: 'instant' });
+          };
+          const inputEvents = ['wheel', 'touchstart', 'pointerdown', 'keydown'];
+          const stopReset = () => {
+            resetting = false;
+            removeEventListener('scroll', resetTop, true);
+            inputEvents.forEach((event) => removeEventListener(event, stopReset, true));
+          };
+          // Catch a late restoration before hero listeners see it. The guard
+          // ends after the first settled frames, or immediately on visitor input.
+          addEventListener('scroll', resetTop, { capture: true, passive: true });
+          inputEvents.forEach((event) => addEventListener(event, stopReset, { capture: true, passive: true }));
+          addEventListener('pageshow', () => {
+            resetTop();
+            requestAnimationFrame(() => requestAnimationFrame(stopReset));
+          }, { once: true });
+          // Keep restoration disabled for this visit: browsers can otherwise
+          // apply the old position after their first rendered frame.
+          addEventListener('pagehide', () => {
+            history.scrollRestoration = 'auto';
+          }, { once: true });
+        }
         let t = null;
         try { t = localStorage.getItem('gf-theme'); } catch (e) {}
         d.dataset.theme = t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';

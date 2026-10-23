@@ -22,9 +22,13 @@ and `new-site/REQUIREMENTS.md` before substantial changes.
   the matching animated poster. Geometry and lighting are baked offline.
 - The user requested the client row in the hero below its actions, then asked
   for the earlier transparent single-colour logo treatment and no Pause button.
-  Reuse the 21 prepared transparent marks from the original company list. Direct
-  interaction stops the loop and exposes manual scrolling; reduced motion stays
-  still. Do not infer new clients.
+  Reuse the 21 prepared transparent marks from the original company list. The
+  latest request keeps scrolling automatic through hover, touch and clicks, with
+  no manual scrolling. Reduced motion/no JavaScript shows a static wrapped list.
+  Off-screen/hidden-tab rest remains for performance. Do not infer new clients.
+- Every reload starts the current page at the top. Clear its fragment on reload
+  while retaining route/query; home replays the opening. First-time deep links
+  and browser Back/Forward retain their navigation behaviour.
   Omit sample stats, testimonials and case studies. Do not restore public
   Sample/Example proof or Replay controls.
 - Preserve Archivo, professional English, usable narrow-screen layouts and

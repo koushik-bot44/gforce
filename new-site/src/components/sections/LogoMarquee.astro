@@ -19,14 +19,13 @@ const logos = clientLogos.flatMap((logo) => {
     <h2 id={titleId} class="t-h3">Our clients</h2>
     {!compact && <p class="marquee-description">Organizations we have worked with.</p>}
   </div>
-  <div class="marquee-viewport" tabindex="0" role="region" aria-label="Client company logos" aria-describedby={`${id}-help`}>
-    <span class="sr-only" id={`${id}-help`}>Focus, hover or touch this row to stop automatic scrolling. Use the arrow keys or swipe to browse the companies.</span>
+  <div class="marquee-viewport">
     <div class="marquee-track">
       <ul class="marquee-list" role="list" aria-labelledby={titleId}>
-        {logos.map((logo) => <li class="client-logo"><img src={logo.src} alt={logo.name} width={logo.width} height={logo.height} loading="lazy" decoding="async" fetchpriority="low" /></li>)}
+        {logos.map((logo) => <li class="client-logo"><img src={logo.src} alt={logo.name} width={logo.width} height={logo.height} loading="lazy" decoding="async" fetchpriority="low" draggable="false" /></li>)}
       </ul>
       <ul class="marquee-list marquee-duplicate" aria-hidden="true" inert>
-        {logos.map((logo) => <li class="client-logo"><img src={logo.src} alt="" width={logo.width} height={logo.height} loading="lazy" decoding="async" fetchpriority="low" /></li>)}
+        {logos.map((logo) => <li class="client-logo"><img src={logo.src} alt="" width={logo.width} height={logo.height} loading="lazy" decoding="async" fetchpriority="low" draggable="false" /></li>)}
       </ul>
     </div>
   </div>
@@ -34,38 +33,12 @@ const logos = clientLogos.flatMap((logo) => {
 
 <script>
   document.querySelectorAll<HTMLElement>('[data-marquee]').forEach((band) => {
-    const viewport = band.querySelector<HTMLElement>('.marquee-viewport')!;
-    const track = band.querySelector<HTMLElement>('.marquee-track')!;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-    let loaded = false, visible = false, manual = false;
+    let loaded = false, visible = false;
     const sync = () => {
-      band.toggleAttribute('data-animated', loaded && !reduced.matches && !manual);
+      band.toggleAttribute('data-animated', loaded && !reduced.matches);
       band.toggleAttribute('data-resting', !visible || document.hidden);
     };
-    const browse = () => {
-      if (manual) return;
-      const transform = getComputedStyle(track).transform;
-      const offset = transform === 'none' ? 0 : -new DOMMatrix(transform).m41;
-      const wasAnimated = band.hasAttribute('data-animated');
-      manual = true;
-      band.setAttribute('data-manual', '');
-      sync();
-      // Replace the transform with an equal native scroll offset in the same
-      // frame. Direct interaction stops the loop without a visible jump/button.
-      if (wasAnimated) viewport.scrollLeft = offset;
-    };
-    viewport.addEventListener('pointerenter', (event) => { if (event.pointerType === 'mouse') browse(); });
-    viewport.addEventListener('pointerdown', browse, { passive: true });
-    viewport.addEventListener('wheel', browse, { passive: true });
-    viewport.addEventListener('focus', browse);
-    viewport.addEventListener('keydown', (event) => {
-      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
-      event.preventDefault();
-      browse();
-      const left = event.key === 'Home' ? 0 : event.key === 'End' ? viewport.scrollWidth :
-        viewport.scrollLeft + (event.key === 'ArrowRight' ? 1 : -1) * viewport.clientWidth * .7;
-      viewport.scrollTo({ left, behavior: reduced.matches ? 'instant' : 'smooth' });
-    });
     reduced.addEventListener('change', sync);
     document.addEventListener('visibilitychange', sync);
     addEventListener('pageshow', sync);
@@ -94,10 +67,9 @@ const logos = clientLogos.flatMap((logo) => {
   }
   .marquee-head { display: grid; gap: .5rem; margin-bottom: 1.5rem; }
   .marquee-description { color: var(--text-muted); font-size: .9375rem; }
-  .marquee-viewport { overflow-x: auto; scrollbar-width: thin; padding: .5rem var(--gutter); }
-  .marquee-viewport:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
-  .marquee-track { display: flex; width: max-content; }
-  .marquee-list { display: flex; align-items: center; gap: var(--logo-gap); flex: none; margin: 0; padding: 0 var(--logo-gap) 0 0; list-style: none; }
+  .marquee-viewport { overflow: clip; padding: .5rem var(--gutter); user-select: none; }
+  .marquee-track { width: 100%; }
+  .marquee-list { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1.5rem var(--logo-gap); margin: 0; padding: 0; list-style: none; }
   .marquee-duplicate { display: none; }
   .client-logo { display: grid; place-items: center; flex: none; height: 2rem; }
   .client-logo img { display: block; height: 1.75rem; width: auto; max-width: none; opacity: .65; }
@@ -106,10 +78,11 @@ const logos = clientLogos.flatMap((logo) => {
   .marquee-compact .marquee-head { width: 100%; margin-bottom: 1rem; }
   .marquee-compact h2 { font-size: .9375rem; font-weight: 550; letter-spacing: 0; }
   .marquee-compact .marquee-viewport { padding-inline: 0; }
-  .marquee[data-manual] .marquee-duplicate { display: flex; }
   @media (min-width: 768px) { .marquee { --logo-gap: 3.5rem; } }
   @media (prefers-reduced-motion: no-preference) {
-    .marquee[data-animated] .marquee-viewport { overflow: clip; mask-image: linear-gradient(90deg, transparent, black 1rem, black calc(100% - 1rem), transparent); }
+    :global(.motion-ok) .marquee-track, .marquee[data-animated] .marquee-track { display: flex; width: max-content; }
+    :global(.motion-ok) .marquee-list, .marquee[data-animated] .marquee-list { flex: none; flex-wrap: nowrap; justify-content: flex-start; padding-right: var(--logo-gap); }
+    .marquee[data-animated] .marquee-viewport { mask-image: linear-gradient(90deg, transparent, black 1rem, black calc(100% - 1rem), transparent); }
     .marquee[data-animated] .marquee-track { animation: client-scroll var(--marquee-duration) linear infinite; will-change: transform; }
     .marquee[data-animated] .marquee-duplicate { display: flex; }
     .marquee[data-resting] .marquee-track { animation-play-state: paused; }

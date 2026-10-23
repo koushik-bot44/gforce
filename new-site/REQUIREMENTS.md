@@ -13,7 +13,9 @@ instructions govern branding, motion and removal of public sample proof.
 - Retain Air's clouds, dawn, white sheets and clear glass. The latest approved
   opening runs automatically on fresh load/reload, rotates/shrinks/lifts the name
   away and reveals the hero message. Visitor input cancels immediately; anchors,
-  history restoration and reduced motion skip it. No idle loop or scroll replay.
+  history restoration and reduced motion skip it. Reloads reset to the top,
+  clearing only the fragment; preserve the current route/query. No idle loop or
+  scroll replay.
 - Use short one-shot films, small mobile files, no Pause buttons and explicit
   Play/Retry recovery. Cloud/backup visuals depict computing, not weather.
 - Omit sample stats, testimonials and case studies. The user later requested
@@ -46,7 +48,7 @@ instructions govern branding, motion and removal of public sample proof.
 | 15 | Animated statistics strip | Omitted while values are samples; conditional layout/data remain for verified figures. |
 | 16 | Named/photo testimonials | Omitted while sample data is present. Requires real approved words, identity and photo permission. |
 | 17 | Problem → Solution → Result cases | Sample cases are archived and omitted publicly. Verified cases may use the existing conditional component later. |
-| 18 | Client-logo marquee | Restored at user request: 21 earlier transparent wordmarks inside the homepage hero and on the business page. No Pause button; a smooth transform loop stops on interaction and exposes keyboard/manual scrolling. Reduced motion stays still. |
+| 18 | Client-logo marquee | Restored at user request: 21 earlier transparent wordmarks inside the homepage hero and on the business page. No Pause button or manual scrolling; the loop continues through hover/touch/click. Reduced motion and no JavaScript show all marks in a static wrapped list. |
 | 19 | Certifications/partner badges | Course-preparation exam names remain. Do not imply an unverified partner/accreditation relationship. |
 | 20 | Five-question IT health check | Interactive questions, score, advice and report request; configured endpoint or clearly stated email fallback. |
 | 21 | Downtime calculator | CAD calculation from visitor inputs and an explicit formula, rather than borrowed claim statistics. |
