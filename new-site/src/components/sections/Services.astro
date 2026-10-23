@@ -1,7 +1,7 @@
 ---
 // Services as an editorial index rather than a grid of icon cards (PDF: services with hover animation and "Learn more").
 // Desktop with a mouse: rows on the left, one sticky preview on the right. Hovering or focusing a row plays that
-// service's muted loop and shows what's included. Touch screens and narrow windows: each row carries its clip inline,
+// service's short silent clip and shows what's included. Touch screens and narrow windows: each row carries its clip inline,
 // played while in view. One <Video> per service serves both layouts: the row is its [data-hover-scope], so the shared player
 // handles hover, focus and in-view playback; on desktop the row box dissolves (display: contents) into the index grid.
 // Without JS the inline layout is used everywhere, so every service's details stay visible.
@@ -15,9 +15,9 @@ const numberWords = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven'
 const count = numberWords[services.length] ?? String(services.length);
 
 // Until a clip lands in the media manifest, the frame shows the service's own line icon on the night gradient.
-const hasClip = (slot: string) => {
+const hasMedia = (slot: string) => {
   const s = media(slot)?.sources;
-  return Boolean(s && (s.mp4 || s.webm));
+  return Boolean(s && (s.mp4 || s.webm || s.srcset));
 };
 ---
 <section id="services" class="services" aria-labelledby="services-title">
@@ -52,7 +52,7 @@ const hasClip = (slot: string) => {
             <div class="svc-stage">
               <div class="svc-frame" data-reveal="media">
                 <Video slot={s.video} mode="hover" label={`${s.name} video`} class="svc-video" />
-                {!hasClip(s.video) && (
+                {!hasMedia(s.video) && (
                   <span class="svc-frame-icon" aria-hidden="true"><Icon name={s.icon} size={56} /></span>
                 )}
               </div>

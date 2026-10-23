@@ -1,27 +1,32 @@
 ---
 // Poster-first, silent inline media. The shared player owns loading, visibility,
-// decoder limits and visitor intent; controls live on the film they affect.
+// decoder limits and one short playback. Play/Retry appears only when needed;
+// clips finish within 4.5 seconds and never expose a persistent pause control.
 import { media } from '../../lib/media';
 import Icon from './Icon.astro';
+import Picture from './Picture.astro';
 
 interface Props {
   slot: string;
   class?: string;
   mode?: 'hero' | 'inview' | 'hover';
   alt?: string;
-  loop?: boolean;
   priority?: boolean;
   controls?: boolean;
   label?: string;
 }
 
-const { slot, class: className = '', mode = 'inview', alt = '', loop = true, priority = false, controls = true, label = 'video', ...rest } = Astro.props;
+const { slot, class: className = '', mode = 'inview', alt = '', priority = false, controls = true, label = 'video', ...rest } = Astro.props;
 const entry = media(slot);
 const s = entry?.sources;
 const poster = s?.poster?.jpg ?? s?.poster?.webp;
 const videoId = `film-${slot}-${crypto.randomUUID().slice(0, 8)}`;
 ---
-{entry && s && (s.mp4 || s.webm) ? (
+{entry?.kind === 'image' ? (
+  <div class={`video-frame video-still ${className}`} {...rest}>
+    <Picture slot={slot} alt={alt} mobileCrop class="video-still-picture" loading={priority ? 'eager' : 'lazy'} fetchpriority={priority ? 'high' : 'auto'} />
+  </div>
+) : entry && s && (s.mp4 || s.webm) ? (
   <div class={`video-frame ${className}`} data-video-frame {...rest}>
     <picture class="video-poster" aria-hidden="true">
       {s.poster?.avif && <source type="image/avif" srcset={s.poster.avif} />}
@@ -43,7 +48,6 @@ const videoId = `film-${slot}-${crypto.randomUUID().slice(0, 8)}`;
       muted
       playsinline
       webkit-playsinline
-      loop={loop}
       preload="none"
       disablepictureinpicture
       aria-hidden={alt ? undefined : 'true'}
@@ -58,7 +62,6 @@ const videoId = `film-${slot}-${crypto.randomUUID().slice(0, 8)}`;
     {controls && (
       <button type="button" class="video-toggle" data-video-toggle data-state="paused" aria-controls={videoId} aria-label={`Play ${label}`} title={`Play ${label}`} hidden>
         <span class="video-control-play" aria-hidden="true"><Icon name="play" size={18} /></span>
-        <span class="video-control-pause" aria-hidden="true"><Icon name="pause" size={18} /></span>
       </button>
     )}
     <span class="sr-only" data-video-status aria-live="polite"></span>
@@ -73,6 +76,8 @@ const videoId = `film-${slot}-${crypto.randomUUID().slice(0, 8)}`;
     overflow: hidden;
     background: var(--color-ink-900);
   }
+  .video-still :global(.video-still-picture),
+  .video-still :global(img),
   .video-poster,
   .video-poster img,
   .video-el {
@@ -111,8 +116,6 @@ const videoId = `film-${slot}-${crypto.randomUUID().slice(0, 8)}`;
   .video-toggle:hover { background: var(--color-ink-950); }
   .video-toggle:focus-visible { outline: 3px solid white; outline-offset: 3px; }
   .video-toggle span { display: grid; }
-  .video-toggle[data-state='playing'] .video-control-play,
-  .video-toggle:not([data-state='playing']) .video-control-pause { display: none; }
   @media (prefers-reduced-motion: reduce) {
     .video-el { transition: none; }
   }

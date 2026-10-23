@@ -14,10 +14,12 @@ and `new-site/REQUIREMENTS.md` before substantial changes.
   Use `/brand/gforce-original.png` without redrawing or substituting its letters.
 - The 3D name uses outlines traced from the original wordmark, not a cursive
   replacement font. Keep the complete **G-FORCE** visible in its opening pose.
-- Hero motion is scroll-only: one full rotation while shrinking and lifting
-  toward the header. No automatic arrival spin or idle animation. Keep matching
-  posters for reduced motion, Save-Data and WebGL fallback. Do not create a
-  WebGL context before visitor intent; geometry and lighting are baked offline.
+- The latest approved opening plays automatically on a fresh load/reload: the
+  complete 3D name rotates, shrinks and lifts away, revealing the hero message.
+  Use one bounded animation, cancel immediately on visitor input and remove the
+  scene after completion. Do not replay on scroll, anchors or history restoration.
+  Reduced motion skips the intro; Save-Data/constrained/failed-WebGL visits use
+  the matching animated poster. Geometry and lighting are baked offline.
 - Omit unverified stats, testimonials, case studies and client logos from public
   pages. Sample data may remain archived in source. Do not restore public
   Sample/Example proof or Replay controls.
@@ -28,8 +30,10 @@ and `new-site/REQUIREMENTS.md` before substantial changes.
 - The user confirmed `www.gforceit.ca` as the production address. Keep Vercel
   as a preview, with production canonicals and preview-only noindex headers.
 - Support steps stay readable immediately. Do not hide essential workflow text
-  behind timers. Shared media playback owns per-film controls and visitor pause;
-  mobile plays at most one visible content film, using the smaller H.264 source.
+  behind timers. Shared media playback owns short, one-shot films with no Pause controls.
+  Preserve Play/Retry recovery and reduced-motion/Save-Data opt-in. Mobile plays
+  at most one visible content film, using the smaller H.264 source. Cloud/backup
+  imagery must show computing/storage rather than weather.
 
 Review desktop/mobile rendering and actual moving sequences. Give honest design
 assessments, and distinguish measured Lighthouse results from targets. Verify

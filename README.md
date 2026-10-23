@@ -57,8 +57,8 @@ For local development, copy `new-site/.env.example` to `new-site/.env`.
 
 Start with [`new-site/PROJECT_HANDOFF.md`](new-site/PROJECT_HANDOFF.md),
 [`PRODUCT.md`](new-site/PRODUCT.md), [`DESIGN.md`](new-site/DESIGN.md) and
-[`REVIEW.md`](new-site/REVIEW.md). Source-media credits are recorded in the two
-`MEDIA_LICENSES` documents. Unverified claims, testimonials, client affiliations
+[`REVIEW.md`](new-site/REVIEW.md). Source-media credits are recorded in the
+`MEDIA_LICENSES*` documents. Unverified claims, testimonials, client affiliations
 and case studies are omitted from the public site until G-Force confirms them.
 
 Dependencies, generated builds, local secrets and browser recordings are

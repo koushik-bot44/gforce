@@ -1,10 +1,33 @@
 ---
-// The opening follows Air: a viewport-sized sculpture retreats with scroll while the next headline enters in normal flow.
+// A brief opening lifts the sculpture and reveals the main message on a fresh visit.
 import SplitHeading from '../ui/SplitHeading.astro';
 import Icon from '../ui/Icon.astro';
 import { hero } from '../../data/site';
 ---
-<section class="hero band-dawn" data-dawn-hero aria-labelledby="hero-title">
+<section class="hero band-dawn" data-dawn-hero data-hero-intro aria-labelledby="hero-title">
+  <script is:inline>
+    (() => {
+      const hero = document.currentScript.closest('section');
+      const navigation = performance.getEntriesByType('navigation')[0];
+      if (document.documentElement.classList.contains('motion-ok') && !location.hash && navigation?.type !== 'back_forward') {
+        hero.setAttribute('data-intro-active', '');
+        hero.dataset.introState = 'preparing';
+        // A failed module must never leave the introduction blocking the page.
+        const watchdog = setTimeout(() => {
+          hero.dispatchEvent(new CustomEvent('hero:intro-timeout'));
+          hero.removeAttribute('data-intro-active');
+          hero.classList.add('intro-complete');
+          hero.dataset.introState = 'complete';
+          document.querySelector('.hero-art.is-portal')?.remove();
+          hero.querySelector('.hero-inner')?.style.removeProperty('transform');
+        }, 6000);
+        hero.addEventListener('hero:intro-complete', () => clearTimeout(watchdog), { once: true });
+      } else {
+        hero.classList.add('intro-complete');
+        hero.dataset.introState = 'complete';
+      }
+    })();
+  </script>
   <div class="hero-clouds" aria-hidden="true"></div>
   <div class="hero-art">
     <picture class="hero-poster">
@@ -16,10 +39,11 @@ import { hero } from '../../data/site';
     <canvas class="hero-glass" data-glass-name aria-hidden="true"></canvas>
   </div>
   <div class="hero-spacer" aria-hidden="true"></div>
-  <a class="hero-scroll" href="#hero-title"><span>Scroll to explore</span><Icon name="arrow" size={18} /></a>
+  <button class="hero-scroll" type="button" data-skip-intro><span>Skip introduction</span><Icon name="arrow" size={18} /></button>
 
   <div class="container-g hero-inner">
     <div class="hero-copy">
+      <p class="hero-location">Toronto, Canada</p>
       <SplitHeading id="hero-title" as="h1" lines={hero.lines} class="hero-title" />
       <p class="hero-sub">{hero.sub}</p>
       <p class="hero-sub-short">{hero.subShort}</p>
@@ -28,101 +52,17 @@ import { hero } from '../../data/site';
       <a class="btn btn-primary" href={hero.primary.href}>{hero.primary.label}<span class="btn-arrow"><Icon name="arrow" size={18} /></span></a>
       <a class="btn btn-secondary" href={hero.secondary.href}>{hero.secondary.label}</a>
     </div>
-
+    <nav class="hero-specialties" aria-label="Explore our expertise">
+      <a href="/business/#managed-it">Managed IT</a>
+      <a href="/business/#cybersecurity">Cybersecurity</a>
+      <a href="/business/#cloud-backup">Cloud &amp; backup</a>
+    </nav>
   </div>
 </section>
 
 <script>
-  import { heroScene } from '../../lib/hero-scene';
-  const root = document.documentElement;
-  const hero = document.querySelector<HTMLElement>('.hero');
-  const art = hero?.querySelector<HTMLElement>('.hero-art');
-  const poster = hero?.querySelector<HTMLElement>('.hero-poster');
-  const canvas = hero?.querySelector<HTMLCanvasElement>('canvas');
-  const motion = root.classList.contains('motion-ok');
-  if (hero && art && poster && canvas && motion) {
-    document.body.append(art);
-    art.classList.add('is-portal');
-    let queued = false;
-    let live = false;
-    let lost = false;
-    let lastProgress = -1;
-    let w = innerWidth;
-    let h = innerHeight;
-    let heroTop = 0;
-    let targetWidth = 160;
-    let targetX = innerWidth / 2;
-    const measure = () => {
-      const logo = document.querySelector('.site-header .logo')!.getBoundingClientRect();
-      w = art.clientWidth || innerWidth;
-      h = art.clientHeight || innerHeight;
-      heroTop = hero.getBoundingClientRect().top + scrollY;
-      targetWidth = Math.min(160, logo.width * .7);
-      targetX = logo.left + logo.width / 2;
-      hero.style.setProperty('--air-brand-x', String(targetX));
-      hero.style.setProperty('--air-brand-width', String(targetWidth));
-      lastProgress = -1;
-    };
-    poster.style.left = '0';
-    poster.style.top = '0';
-    measure();
-    const sync = () => {
-      queued = false;
-      const p = Math.min(1, Math.max(0, (scrollY - heroTop) / h));
-      if (p === lastProgress) return;
-      lastProgress = p;
-      const fill = w <= 700 ? .94 : .86;
-      const scale = Math.exp(Math.log(Math.min(.5, targetWidth / (w * fill))) * p);
-      const start = w <= 700 ? h * .56 : h * .62;
-      const y = start + (36 - start) * (1 - Math.pow(1 - p, 2));
-      hero.style.setProperty('--air-p', p.toFixed(5));
-      art.style.opacity = String(1 - Math.min(1, Math.max(0, (p - .65) / .28)));
-      if (!live) {
-        const lateral = 1 - Math.pow(1 - Math.min(1, Math.max(0, (p - .45) / .35)), 3);
-        const x = w / 2 + (targetX - w / 2) * lateral;
-        poster.style.clipPath = p > .58 ? 'inset(0 0 20% 0)' : 'none';
-        poster.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) scale(${scale}) rotateY(${p * 360}deg)`;
-      }
-    };
-    const schedule = () => { if (!queued) { queued = true; requestAnimationFrame(sync); } };
-    sync();
-    addEventListener('scroll', schedule, { passive: true });
-    addEventListener('resize', () => { measure(); schedule(); }, { passive: true });
-    document.fonts.ready.then(() => { measure(); sync(); });
-    canvas.addEventListener('webglcontextlost', () => {
-      lost = true;
-      live = false;
-      canvas.classList.remove('is-ready');
-      poster.classList.remove('is-live');
-      lastProgress = -1;
-      sync();
-    });
-
-    const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
-    const capable = matchMedia('(pointer: fine)').matches || (navigator.hardwareConcurrency ?? 4) >= 6;
-    if (capable && !connection?.saveData && !/2g/.test(connection?.effectiveType ?? '')) {
-      // At rest Air's mark is still. Paint its poster first, and initialize interactive 3D only on visitor intent.
-      // No eager WebGL probe: reduced-motion and data-saving visits never create a GPU context.
-      let booted = false;
-      const boot = () => {
-        // A fast swipe or deep anchor may skip the artwork entirely. Keep the
-        // complete poster and avoid initializing an already invisible GPU scene.
-        if (booted || scrollY - heroTop >= h * .93) return;
-        booted = true;
-        ['pointerdown', 'wheel', 'keydown', 'scroll'].forEach(type => removeEventListener(type, boot));
-        import('../../scripts/glass-name').then(({ mountGlassName }) => mountGlassName(canvas, { ...heroScene(innerWidth), progressEl: hero }))
-          .then((scene) => {
-            if (lost) { scene.stop(); return; }
-            sync();
-            live = true;
-            canvas.classList.add('is-ready');
-            poster.classList.add('is-live');
-          })
-          .catch(() => { /* A complete, scroll-linked poster stays usable when WebGL cannot start. */ });
-      };
-      ['pointerdown', 'wheel', 'keydown', 'scroll'].forEach(type => addEventListener(type, boot, { passive: true }));
-    }
-  }
+  import { initHeroIntro } from '../../scripts/hero-intro';
+  initHeroIntro();
 </script>
 
 <style>
@@ -132,6 +72,7 @@ import { hero } from '../../data/site';
     overflow: clip;
     clip-path: inset(0);
     padding-top: var(--header-h);
+    min-height: 100svh;
   }
   :global(html[data-theme]) .hero {
     color-scheme: light;
@@ -193,6 +134,12 @@ import { hero } from '../../data/site';
     text-align: center;
     padding-block: 1rem clamp(5rem, 8vw, 8rem);
   }
+  .hero.intro-complete { padding-top: 0; }
+  .hero.intro-complete .hero-art { display: none; }
+  .hero.intro-complete .hero-inner { padding-top: clamp(8rem, 18svh, 12rem); }
+  .hero-location { font-size: .875rem; font-weight: 550; color: var(--text-muted); margin-bottom: 1.25rem; }
+  .hero-specialties { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem 1.5rem; margin-top: .5rem; font-size: .875rem; }
+  .hero-specialties a { color: var(--text-muted); text-decoration-thickness: 1px; text-underline-offset: .25em; }
   .hero-copy { display: grid; justify-items: center; }
   .hero-copy :global(.hero-title) {
     max-width: 28ch;
@@ -205,21 +152,16 @@ import { hero } from '../../data/site';
   .hero-sub { max-width: 62ch; margin-top: 1.25rem; font-size: 1.0625rem; line-height: 1.6; color: var(--text-muted); }
   .hero-sub-short { display: none; max-width: 42ch; margin-top: 1rem; font-size: 1rem; line-height: 1.5; color: var(--text-muted); }
   .hero-ctas { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .75rem; }
-  .hero-proof { display: flex; align-items: center; gap: .75rem; margin-top: .25rem; }
-  .hero-stat { display: inline-flex; align-items: baseline; font-size: 1.5rem; font-weight: 650; line-height: 1; }
-  .hero-stat-label { max-width: 24ch; font-size: .8125rem; line-height: 1.35; text-align: left; }
-  .fn-ref { position: relative; margin-left: .1em; font-size: .65em; align-self: flex-start; text-decoration: none; }
-  .fn-ref::after { content: ''; position: absolute; inset: -.6rem -.5rem; }
-  .hero-footnote { max-width: 75ch; color: var(--text-muted); font-size: .75rem; line-height: 1.5; }
-  :global(.motion-ok) .hero { padding-top: 0; background-image: none !important; }
-  :global(.motion-ok) .hero::before { content: ''; position: fixed; inset: 0; height: 100svh; background-image: var(--dawn-gradient); z-index: -2; }
-  :global(.motion-ok) .hero-inner { padding-top: clamp(5rem, 12svh, 8rem); }
+  .hero[data-intro-active] { padding-top: 0; background-image: none !important; }
+  .hero[data-intro-active]::before { content: ''; position: fixed; inset: 0; height: 100svh; background-image: var(--dawn-gradient); z-index: -2; }
+  .hero[data-intro-active] .hero-inner { padding-top: clamp(8rem, 18svh, 12rem); }
   .hero-art:global(.is-portal) { z-index: calc(var(--z-sticky) + 1); }
-  :global(.motion-ok) .hero-art { position: fixed; inset: 0; height: 100svh; }
-  :global(.motion-ok) .hero-clouds { position: fixed; height: 100svh; }
-  :global(.motion-ok) .hero-poster { width: 91.4894vw; top: 62%; }
-  :global(.motion-ok) .hero-spacer { display: block; height: 108svh; }
-  :global(.motion-ok) .hero-scroll {
+  .hero-art:global(.is-portal) { position: fixed; inset: 0; height: 100svh; }
+  .hero[data-intro-active] .hero-clouds { position: fixed; height: 100svh; }
+  .hero-art:global(.is-portal) .hero-poster { width: 91.4894vw; will-change: transform; }
+  .hero[data-intro-active] .hero-inner { will-change: transform; }
+  .hero[data-intro-active] .hero-spacer { display: block; height: 108svh; }
+  .hero[data-intro-active] .hero-scroll {
     display: flex;
     position: absolute;
     top: calc(100svh - 4.5rem);
@@ -231,6 +173,10 @@ import { hero } from '../../data/site';
     color: var(--text);
     font-size: .8125rem;
     text-decoration: none;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
   }
   .hero-scroll :global(svg) { transform: rotate(90deg); }
   @media (max-width: 700px) {
@@ -239,7 +185,6 @@ import { hero } from '../../data/site';
     .hero-sub { display: none; }
     .hero-sub-short { display: block; }
     .hero-ctas { max-width: 25rem; }
-    .hero-proof { gap: .6rem; }
-    :global(.motion-ok) .hero-poster { width: 100vw; top: 56%; }
+    .hero-art:global(.is-portal) .hero-poster { width: 100vw; }
   }
 </style>

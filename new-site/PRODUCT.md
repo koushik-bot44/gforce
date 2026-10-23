@@ -19,7 +19,7 @@ virtual, in-person and self-paced formats described in the course data.
 
 Keep the original supplied logo and its original crimson palette. The glass
 sculpture follows the original G-FORCE wordmark outlines. Air contributes the
-cloud atmosphere and scroll-driven rotation/shrink/lift; it does not replace
+cloud atmosphere and rotation/shrink/lift; it does not replace
 G-Force's identity. Archivo is the interface typeface.
 
 Business and learner paths must be easy to find. The complete name, headings,
@@ -52,8 +52,10 @@ Targets are WCAG 2.2 AA, mobile LCP ≤2.5 seconds and smooth purposeful motion.
 These are goals, not certifications or current measured results. Evaluate the
 latest build with browser interactions, moving sequences and reproducible
 Lighthouse conditions. Keep reduced-motion, Save-Data and unsupported-WebGL
-paths complete. Start live WebGL only after visitor intent and avoid rendering
-an idle sculpture continuously.
+paths complete. The latest approved fresh-load intro may prepare live WebGL on capable devices,
+then must dispose it after the bounded handoff. Skip the intro for reduced motion
+and interrupt immediately on visitor input. Never render an idle sculpture
+continuously. Short films play once and rest; no Pause toolbar is shown.
 
 Remaining client inputs: confirmed contact/hours, course details and status,
 form endpoint, booking URL, and permissioned/substantiated proof if it is to be

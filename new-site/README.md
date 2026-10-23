@@ -32,7 +32,7 @@ sent during review.
 Confirmed company details, claims, proof and course information belong in
 `src/data/site.ts`. Unverified proof is omitted until real content is supplied.
 The original source assets remain available; active media is selected through
-`src/data/media*.json`. Credits are in both `MEDIA_LICENSES` documents.
+`src/data/media*.json`. Credits are in the `MEDIA_LICENSES*` documents.
 
 ## Artwork and media
 
@@ -50,7 +50,9 @@ Reproduce licensed media encodes from downloaded originals:
 GFORCE_FFMPEG=/path/to/ffmpeg GFORCE_MEDIA_SOURCE_DIR=/path/to/originals node scripts/prepare-air-media.mjs
 ```
 
-Add `GFORCE_MEDIA_ONLY=video` to re-encode just the films. Downloaded originals
+Use `scripts/prepare-video-clips.mjs` with the source paths/credits in
+`scripts/video-clip-sources.json` to generate the short 640px/960px delivery clips.
+Add `GFORCE_MEDIA_ONLY=video` to the older air script to re-encode archived films. Downloaded originals
 and private reference-study footage are kept outside the shipping site.
 
 ## Production regression checks
@@ -61,14 +63,15 @@ using an existing Playwright installation and Chrome:
 ```sh
 GFORCE_BROWSER_MODULE=/path/to/playwright/index.mjs npm run check:ui
 GFORCE_BROWSER_MODULE=/path/to/playwright/index.mjs GFORCE_BROWSER_ENGINE=webkit npm run check:media
+GFORCE_BROWSER_MODULE=/path/to/playwright/index.mjs GFORCE_BROWSER_ENGINE=webkit npm run check:hero
 ```
 
 The WebKit check requires Playwright's WebKit browser to be installed. These QA
 tools are separate from the website's runtime dependencies. Support tests check
 actual rendered text, rapid tab changes and narrow layouts. Media tests check
-playback advancement, pause persistence, visibility, autoplay blocking and
-network failure recovery. Hero tests check idle GPU work and poster fallbacks,
-including context loss. Captures go to OS temporary directories by default.
+one-shot completion, offscreen resume, visibility, autoplay blocking and
+network failure recovery. Hero tests check fresh-load/reload handoffs, immediate
+interruption, reduced motion, fallback posters and no GPU work after completion. Captures go to OS temporary directories by default.
 
 The production canonical is `https://www.gforceit.ca`. Vercel preview hostnames
 receive `X-Robots-Tag: noindex, follow`; the custom production domain does not.

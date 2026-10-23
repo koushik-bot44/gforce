@@ -49,6 +49,9 @@ try {
           page = await context.newPage();
           page.on('pageerror', (error) => errors.push(error.message));
           await page.goto(base, { waitUntil: 'networkidle' });
+          // Test the settled Support workflow. Fresh-load opening and immediate
+          // interruption are covered separately by check-hero-motion.mjs.
+          await page.waitForFunction(() => document.querySelector('[data-hero-intro]')?.dataset.introState === 'complete');
 
           const support = page.getByRole('tab', { name: 'Support', exact: true });
           await support.click();

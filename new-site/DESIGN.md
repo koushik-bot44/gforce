@@ -15,8 +15,8 @@ retain Air's clouds, clear glass, white sheets and scroll choreography.
   `/3d/gforce-glass-original-{desktop,mobile}`.
 - Follow [Air on Refero](https://styles.refero.design/style/d3289fe7-a85e-42d8-96b7-eb7faa62a104)
   for photographic clouds, transparent sculptural depth and a pale blue-to-apricot
-  atmosphere. The opening artwork is fixed over a scroll spacer; the headline,
-  description and two actions follow in normal flow as it retreats.
+  atmosphere. The opening artwork is fixed briefly while the headline, description and
+  actions enter together. After the handoff the page has an ordinary hero.
 - Service and learning content alternates sky/dawn with white sheets. Keep
   professional hierarchy, varied section spacing and real licensed imagery.
   Avoid generic decorative dots, repeated ornamental kickers and dark flat blocks.
@@ -60,17 +60,18 @@ shadows. Use the existing z-index scale for sticky, overlay and modal content.
 
 ## Motion and performance
 
-Air's live opening is scroll-driven. It is not an automatic arrival spin.
+The latest user-approved opening is automatic on a fresh load/reload. It is a
+bounded handoff, with immediate visitor interruption and no replay on scroll.
 
 | Moment | Current behaviour |
 |---|---|
-| Opening | Matching responsive `hero-poster-original-*` AVIF/WebP paints first. The complete original name has a slight initial pitch and stays still until scrolling. |
-| Scroll handoff | Progress drives one full Y rotation, exponential shrinking and upward travel toward the header logo. Copy enters in normal flow. The artwork fades as the handoff completes. |
-| Live scene | Only eligible visitor intent starts the deferred renderer. No eager WebGL probe, runtime font extrusion or environment baking. Quantized geometry and a prepared CubeUV environment atlas load as assets. Draw on scroll/resize/visibility changes, not a perpetual idle loop. |
-| Fallbacks | Reduced motion uses the static readable composition. Save-Data, constrained devices or failed WebGL retain the poster. With motion enabled, the poster follows the spatial scroll transition while the renderer loads. |
+| Opening | Matching responsive `hero-poster-original-*` AVIF/WebP paints first with the complete original name. Eligible devices prepare the live scene within a bounded startup window. |
+| Handoff | One rAF drives a full Y rotation, exponential shrinking and upward travel while copy moves into place with continuous easing. Completion removes the temporary spacer and artwork in the same frame. |
+| Live scene | Quantized geometry and a prepared CubeUV atlas avoid runtime extrusion/environment baking. The scene is disposed after the short introduction; no perpetual animation or scroll replay. |
+| Fallbacks | Reduced motion, anchors and history restoration show the normal hero immediately. Save-Data, constrained devices or failed WebGL animate the matching poster. Visitor input cancels immediately; a watchdog exposes content if the module fails. |
 | Headings | Default content is visible. Masked reveals are armed only after the observer exists; already-reached content, restored scroll, anchors and focus reveal immediately. The learner heading must never depend on a late animation to be readable. |
-| Dawn panel | Photographic film plus keyboard-accessible tabs describing overnight care and support workflows. No simulated clock/outcome, Example badge or Replay control. A film pause control remains where autoplay needs it. |
-| Services/media | Desktop previews attach on hover/focus; touch/in-view films follow visibility. Posters remain underneath. Films pause off-screen/when hidden; reduced motion and Save-Data retain posters. |
+| Dawn panel | Photographic film plus keyboard-accessible tabs describing overnight care and support workflows. No simulated clock/outcome, Example badge or Replay control. A short film plays once and rests. |
+| Services/media | Desktop previews attach on hover/focus; touch/in-view films follow visibility. Posters remain underneath. Four-second films stop off-screen/when hidden and rest after completion. Reduced motion/Save-Data retain posters with manual Play; Retry recovers a failed request. No Pause controls. |
 | Process/micro | Scroll progress explains the ordered business process. Buttons/links give brief colour/position feedback; keyboard focus stays visible. |
 
 Use the established ease-out curve `cubic-bezier(.22,1,.36,1)` for entrances,
@@ -84,8 +85,8 @@ effects bounded and verify actual frames and initial load, including Lighthouse.
 Sample stats, testimonials, case studies and client logos are archived and
 omitted publicly. Publish proof only after verification and permission. Exam
 names describe course preparation. Stock imagery does not establish a team or
-customer relationship. Credits remain in `MEDIA_LICENSES.md` and
-`MEDIA_LICENSES-air.md`.
+customer relationship. Credits remain in the `MEDIA_LICENSES*` documents, including the current
+short-clip and security-photo sources.
 
 Use verb-led actions and specific professional English. Forms and booking must
 describe their configured endpoint or email-draft fallback accurately. Regenerate

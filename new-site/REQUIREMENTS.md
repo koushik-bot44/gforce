@@ -10,9 +10,12 @@ instructions govern branding, motion and removal of public sample proof.
 - Keep the exact supplied logo PNG and original crimson `#cb1f45` → `#89001e`.
   Use the original G-FORCE letter outlines for the glass sculpture, with the
   complete name visible. Earlier no-red and cursive-logo experiments are superseded.
-- Retain Air's clouds, dawn, white sheets, clear glass and scroll-driven full
-  rotation/shrink/lift. No timed spin or idle loop. Poster first; no WebGL before
-  visitor intent. Geometry and environment are baked offline.
+- Retain Air's clouds, dawn, white sheets and clear glass. The latest approved
+  opening runs automatically on fresh load/reload, rotates/shrinks/lifts the name
+  away and reveals the hero message. Visitor input cancels immediately; anchors,
+  history restoration and reduced motion skip it. No idle loop or scroll replay.
+- Use short one-shot films, small mobile files, no Pause buttons and explicit
+  Play/Retry recovery. Cloud/backup visuals depict computing, not weather.
 - Omit sample stats, testimonials, case studies and unconfirmed client logos
   from public pages. Archive source data only. No public Example/Replay controls.
 - Improve readable typography/English, missing learner content, overlap, lag
@@ -28,7 +31,7 @@ instructions govern branding, motion and removal of public sample proof.
 | 3 | Working navigation/legal links | Real blog, privacy, terms and accessibility routes. Check built links/anchors after changes. |
 | 4 | Toronto/support hours consistency | MT hours and ET equivalent are stated; client confirmation remains pending. No unconfirmed live open/closed promise. |
 | 5 | Titles, descriptions and SEO | Route metadata, canonical/OG, structured data, sitemap and robots. Canonical origin is `www.gforceit.ca`. |
-| 6 | Animated hero/background | Original-outline glass sculpture over licensed clouds; Air-derived scroll transition and matching poster fallbacks replace the initial network/video suggestion. |
+| 6 | Animated hero/background | Original-outline glass sculpture over licensed clouds; automatic opening handoff and matching poster fallbacks replace the initial network/video suggestion. |
 | 7 | 90% outages counter and basis | Omitted publicly under latest direction. Archived unverified figure must not be restored without substantiation. |
 | 8 | Assessment and training actions | Both actions in the hero, followed by separate audience paths. Assessment routes into contact. |
 | 9 | Strong type and brand colour | Archivo, original logo/crimson, clear glass, sky photography and dawn; no substituted script wordmark. |
@@ -46,7 +49,7 @@ instructions govern branding, motion and removal of public sample proof.
 | 21 | Downtime calculator | CAD calculation from visitor inputs and an explicit formula, rather than borrowed claim statistics. |
 | 22 | Course finder | Goal, level and format filters, result count and empty state. Confirm schedules/fees with G-Force. |
 | 23 | Chat/contact assistance | Scripted Ask G-Force routes to email, telephone and booking; no claim of an unattended live human chat. |
-| 24 | Scroll motion | Scroll-linked sculpture, selective reveals, media treatment and business process; poster/reduced-motion alternatives. Dawn tabs describe service routines without Example/Replay UI. |
+| 24 | Scroll motion | Fresh-load sculpture intro, selective reveals, one-shot media and business process; poster/reduced-motion alternatives. Dawn tabs describe service routines without Example/Replay UI. |
 | 25 | Dark mode | Stored/system theme preference; opaque sky surfaces and readable controls. Hero keeps its light dawn art direction. |
 | 26 | Blog images, tags and reading time | Populated licensed images, category/date metadata and reading time. |
 | 27 | Newsletter | Separate unticked consent and sender details. Provider delivery depends on the form endpoint; otherwise opens email. |

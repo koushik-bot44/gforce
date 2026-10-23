@@ -23,12 +23,16 @@ no-red and script-wordmark choices are superseded. Archivo carries the interface
 - The glass name uses original wordmark outlines, with the entire G-FORCE
   visible. `hero-scene.ts` selects `gforce-glass-original-*` geometry;
   `hero-poster-original-*` supplies the initial and fallback images.
-- The opening follows Air's actual scroll behaviour. A fixed sculpture turns
-  once, shrinks and lifts toward the header as subsequent copy enters normal
-  flow. It stays still at rest. There is no timed arrival turn or idle loop.
-- WebGL starts only after visitor intent on an eligible device. Quantized
-  geometry and a prepared environment atlas replace runtime font extrusion and
-  environment baking. Reduced motion, Save-Data and failed WebGL retain posters.
+- The latest approved opening runs once on a fresh load/reload. The sculpture
+  rotates, shrinks and lifts away as the hero message moves into place. One rAF
+  owns both transforms; visitor input ends it immediately. Completion removes
+  the artwork and disposes the live scene. Scrolling back does not replay it.
+- Eligible devices prepare WebGL only for the bounded opening. Quantized
+  geometry and a prepared environment atlas replace runtime extrusion/baking.
+  Reduced motion skips the intro; Save-Data/constrained/failed WebGL use a poster.
+- Films are short, one-shot clips with small mobile encodes. They rest after
+  completion, with Play/Retry only for opt-in and recovery. Cloud/backup footage
+  depicts real computing storage rather than weather.
 - Headings remain readable until their reveal observer is installed. Already
   reached, restored-scroll and focused content is shown immediately. Check the
   “Build your career in IT” section in real desktop/mobile scrolling.
