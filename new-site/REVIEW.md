@@ -127,8 +127,15 @@ establish correct media behaviour or WCAG certification.
 - [Mobile Lighthouse](review/2026-10-23/client-hero/lighthouse-mobile.html)
 - [Throttled scroll sample](review/2026-10-23/production/intro-scroll.json)
 
-The Vercel preview is https://gforce-kappa.vercel.app/. Application commit
-`bb4f156` deployed Ready as `dpl_8sLxo2BqjBHcAeuZNzh7koeGacFK`. The deployed hero
+The Vercel preview is https://gforce-kappa.vercel.app/. The transparent client-row
+application commit `d818471` deployed Ready as `dpl_MwhYe1Q9niAbNTNyjxcurQbLaxeW`.
+Three live Chrome/WebKit checks passed: all 21 prepared marks load inside the
+hero without buttons, cards, overflow or JavaScript errors.
+[Live client-row verification](review/2026-10-23/client-hero/live-smoke.json)
+records the current deployment.
+
+The preceding intro/media application commit `bb4f156` deployed Ready as
+`dpl_8sLxo2BqjBHcAeuZNzh7koeGacFK`. The deployed hero
 asset matches the tested build byte for byte. Five focused live intro checks and
 four live media suites across Chrome/WebKit passed; all service clips play and
 complete, and the cybersecurity still displays correctly. All ten video

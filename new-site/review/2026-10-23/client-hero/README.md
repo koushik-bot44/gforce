@@ -37,3 +37,9 @@ Verification against the production build:
 Evidence: `browser-results.json`, `intro-with-clients.json`,
 `lighthouse-desktop.html`, `lighthouse-mobile.html`, and settled desktop/mobile
 screenshots alongside this file. The local test URL is 127.0.0.1:4404.
+
+The client-row application commit `d818471` deployed Ready as
+`dpl_MwhYe1Q9niAbNTNyjxcurQbLaxeW` at https://gforce-kappa.vercel.app/.
+Three live checks (Chrome 390/1440px and WebKit 390px) passed: 21 loaded
+transparent marks, no Pause controls or white cards, no overlap/overflow or
+page errors, and manual browsing after focus. See `live-smoke.json`.
