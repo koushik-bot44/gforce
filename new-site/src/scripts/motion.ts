@@ -1,10 +1,10 @@
 // Site motion and small interactions (DESIGN.md "Motion", tuned with the Air motion verdict).
 // Every effect enhances content that is already visible; .motion-ok (set in <head>) gates the start states.
 import Lenis from 'lenis';
+import { initMediaPlayback } from './media-playback';
 
 const root = document.documentElement;
 const motionOK = root.classList.contains('motion-ok');
-const saveData = Boolean((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData);
 const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
 const easeOut = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(1 - t, 4)); // close to cubic-bezier(.22,1,.36,1) for counts
 
@@ -122,13 +122,18 @@ if (motionOK && counters.length) {
 
 /* ---------- Scroll-linked progress: writes --p (0..1) on [data-scroll-progress] ---------- */
 const progressEls = Array.from(document.querySelectorAll<HTMLElement>('[data-scroll-progress]'));
+const lastProgress = new WeakMap<HTMLElement, string>();
 const shifts = new Map(progressEls.filter((el) => el.hasAttribute('data-dawn-stage')).map((el) => [el, {
   steps: Array.from(el.querySelectorAll<HTMLElement>('[data-shift-step]')),
 }]));
 const updateProgress = () => {
   const vh = innerHeight;
-  for (const el of progressEls) {
-    const r = el.getBoundingClientRect();
+  // Read layout once before any style writes. Interleaving these phases forces
+  // repeated style/layout work while media and React islands enter the page.
+  const positions = progressEls.map((el) => el.getBoundingClientRect());
+  for (let index = 0; index < progressEls.length; index++) {
+    const el = progressEls[index];
+    const r = positions[index];
     const mode = el.dataset.scrollProgress;
     let p: number;
     if (mode === 'sticky') p = -r.top / Math.max(1, r.height - vh); // tall wrapper with a sticky child
@@ -136,12 +141,18 @@ const updateProgress = () => {
     else if (mode === 'enter') p = (vh - r.top) / vh; // 0 as it enters, 1 when its top reaches the top
     else p = (vh - r.top) / (vh + r.height); // through
     const progress = Math.min(1, Math.max(0, p));
-    el.style.setProperty('--p', progress.toFixed(4));
+    const value = progress.toFixed(4);
+    if (lastProgress.get(el) === value) continue;
+    lastProgress.set(el, value);
+    el.style.setProperty('--p', value);
     const shift = shifts.get(el);
     if (shift) {
       const elapsed = Math.min(1, Math.max(0, (progress - 0.12) / 0.55));
       const milestones = [0, 0.27, 0.54, 1];
-      shift.steps.forEach((step, index) => { step.dataset.complete = String(elapsed >= milestones[index]); });
+      shift.steps.forEach((step, index) => {
+        const complete = String(elapsed >= milestones[index]);
+        if (step.dataset.complete !== complete) step.dataset.complete = complete;
+      });
     }
   }
 };
@@ -190,140 +201,7 @@ if (header) {
 }
 
 /* ---------- Video ---------- */
-const attachSources = (video: HTMLVideoElement) => {
-  if (video.dataset.attached) return;
-  video.dataset.attached = '1';
-  const small = innerWidth < 768 && video.dataset.srcMobile;
-  const add = (src: string | undefined, type: string) => {
-    if (!src) return;
-    const s = document.createElement('source');
-    s.src = src;
-    s.type = type;
-    video.appendChild(s);
-  };
-  if (small) add(video.dataset.srcMobile, 'video/mp4');
-  else {
-    add(video.dataset.srcWebm, 'video/webm');
-    add(video.dataset.srcMp4, 'video/mp4');
-  }
-  video.load();
-};
-const inView = new WeakSet<HTMLVideoElement>();
-const play = (video: HTMLVideoElement) => {
-  if (document.hidden) return;
-  attachSources(video);
-  const p = video.play();
-  if (p) p.then(() => video.classList.add('is-playing')).catch(() => {});
-};
-const allowVideo = motionOK && !saveData;
-const videos = Array.from(document.querySelectorAll<HTMLVideoElement>('video[data-video-mode]'));
-videos.forEach((video) => {
-  if (!allowVideo) return; // posters only
-  const mode = video.dataset.videoMode;
-  if (mode === 'hero') {
-    inView.add(video);
-    const start = () => play(video);
-    if (document.readyState === 'complete') setTimeout(start, 150);
-    else addEventListener('load', () => setTimeout(start, 150), { once: true });
-    new IntersectionObserver((entries) => {
-      for (const e of entries) {
-        if (e.isIntersecting) {
-          inView.add(video);
-          play(video);
-        } else {
-          inView.delete(video);
-          video.pause();
-        }
-      }
-    }).observe(video);
-    return;
-  }
-  // In-view films fetch ahead. Desktop service previews wait for hover/focus: their five overlapping
-  // rectangles all intersect together, so observing all of them fetched and decoded five films at once.
-  // Each retains its responsive poster while inactive.
-  if (!(mode === 'hover' && finePointer)) {
-    const prefetch = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          attachSources(video);
-          video.preload = 'auto';
-          prefetch.disconnect();
-        }
-      },
-      { rootMargin: '100% 0px' },
-    );
-    prefetch.observe(video);
-  }
-  const vio = new IntersectionObserver(
-    (entries) => {
-      for (const e of entries) {
-        if (e.isIntersecting) inView.add(video);
-        else inView.delete(video);
-        if (mode === 'hover' && finePointer) {
-          if (!e.isIntersecting) video.pause();
-          continue;
-        }
-        if (e.isIntersecting) play(video);
-        else video.pause();
-      }
-    },
-    { threshold: 0.4 },
-  );
-  vio.observe(video);
-  if (mode === 'hover' && finePointer) {
-    const scope = video.closest<HTMLElement>('[data-hover-scope]') ?? video.parentElement!;
-    scope.addEventListener('pointerenter', () => play(video));
-    scope.addEventListener('pointerleave', () => video.pause());
-    scope.addEventListener('focusin', () => play(video));
-    scope.addEventListener('focusout', () => video.pause());
-  }
-});
-document.addEventListener('visibilitychange', () => {
-  for (const v of videos) {
-    if (document.hidden) v.pause();
-    else if (allowVideo && inView.has(v) && v.dataset.videoMode !== 'hover' && v.dataset.attached) play(v);
-  }
-});
-
-/* ---------- Support workflow: automatically reveals its steps once, then stays readable ---------- */
-document.querySelectorAll<HTMLElement>('[data-ticket]').forEach((card) => {
-  if (!motionOK) return; // static: the whole story is visible
-  const steps = Array.from(card.querySelectorAll<HTMLElement>('.ticket-steps li'));
-  if (!steps.length) return;
-  card.dataset.workflowReady = '';
-  let i = 0;
-  let timer = 0;
-  let running = false;
-  let done = false;
-  let visible = false;
-  const STEP = 1000; // four steps complete in under five seconds; no persistent loop or extra controls
-  const tick = () => {
-    steps[i].classList.add('is-on');
-    i++;
-    if (i === steps.length) {
-      card.classList.add('is-resolved');
-      running = false;
-      done = true;
-      return;
-    }
-    timer = window.setTimeout(tick, STEP);
-  };
-  const start = () => {
-    if (running || done || !visible || document.hidden || card.hidden || card.inert) return;
-    running = true;
-    timer = window.setTimeout(tick, i === 0 ? 600 : STEP);
-  };
-  const stop = () => {
-    running = false;
-    clearTimeout(timer);
-  };
-  new IntersectionObserver((entries) => {
-    visible = entries.some((entry) => entry.isIntersecting);
-    if (visible) start();
-    else stop();
-  }, { threshold: 0.35 }).observe(card);
-  document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
-});
+initMediaPlayback();
 
 /* ---------- Theme toggle ---------- */
 const applyThemeLabels = () => {
@@ -370,7 +248,7 @@ if (menuBtn && menu) {
       menuBtn.focus();
     }
   });
-  matchMedia('(min-width: 1024px)').addEventListener('change', (m) => m.matches && setOpen(false));
+  matchMedia('(min-width: 1200px)').addEventListener('change', (m) => m.matches && setOpen(false));
 }
 
 /* ---------- Marquee pause (WCAG 2.2.2) ---------- */

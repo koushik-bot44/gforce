@@ -18,6 +18,7 @@ To inspect the production build:
 ```sh
 npm run build
 npm run check:tokens
+npm run check:seo
 npm run preview -- --host 127.0.0.1 --port 4404
 ```
 
@@ -51,3 +52,23 @@ GFORCE_FFMPEG=/path/to/ffmpeg GFORCE_MEDIA_SOURCE_DIR=/path/to/originals node sc
 
 Add `GFORCE_MEDIA_ONLY=video` to re-encode just the films. Downloaded originals
 and private reference-study footage are kept outside the shipping site.
+
+## Production regression checks
+
+With the production preview running on port 4404, run the browser regressions
+using an existing Playwright installation and Chrome:
+
+```sh
+GFORCE_BROWSER_MODULE=/path/to/playwright/index.mjs npm run check:ui
+GFORCE_BROWSER_MODULE=/path/to/playwright/index.mjs GFORCE_BROWSER_ENGINE=webkit npm run check:media
+```
+
+The WebKit check requires Playwright's WebKit browser to be installed. These QA
+tools are separate from the website's runtime dependencies. Support tests check
+actual rendered text, rapid tab changes and narrow layouts. Media tests check
+playback advancement, pause persistence, visibility, autoplay blocking and
+network failure recovery. Hero tests check idle GPU work and poster fallbacks,
+including context loss. Captures go to OS temporary directories by default.
+
+The production canonical is `https://www.gforceit.ca`. Vercel preview hostnames
+receive `X-Robots-Tag: noindex, follow`; the custom production domain does not.

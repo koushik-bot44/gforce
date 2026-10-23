@@ -105,7 +105,7 @@ const ld = {
         '@type': 'Organization',
         '@id': `${company.url}/#org`,
         name: 'G-Force IT Services',
-        logo: { '@type': 'ImageObject', url: `${company.url}/brand/favicon-512.png` },
+        logo: { '@type': 'ImageObject', url: `${company.url}/brand/logo-schema.png`, width: 1200, height: 240 },
       },
     },
     {
@@ -119,7 +119,7 @@ const ld = {
   ],
 };
 ---
-<Base title={title} description={excerpt} type="article" image={cover}>
+<Base title={title} description={excerpt} type="article" image={cover} imageAlt={`Cover image for ${title}`}>
   <Fragment slot="head">
     <meta property="article:published_time" content={published} />
     {revised && <meta property="article:modified_time" content={updated} />}

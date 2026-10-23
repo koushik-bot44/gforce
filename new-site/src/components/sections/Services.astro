@@ -2,7 +2,7 @@
 // Services as an editorial index rather than a grid of icon cards (PDF: services with hover animation and "Learn more").
 // Desktop with a mouse: rows on the left, one sticky preview on the right. Hovering or focusing a row plays that
 // service's muted loop and shows what's included. Touch screens and narrow windows: each row carries its clip inline,
-// played while in view. One <Video> per service serves both layouts: the row is its [data-hover-scope], so motion.ts
+// played while in view. One <Video> per service serves both layouts: the row is its [data-hover-scope], so the shared player
 // handles hover, focus and in-view playback; on desktop the row box dissolves (display: contents) into the index grid.
 // Without JS the inline layout is used everywhere, so every service's details stay visible.
 import Video from '../ui/Video.astro';
@@ -24,11 +24,6 @@ const hasClip = (slot: string) => {
   <div class="container-g">
     <div class="svc-top">
       <SplitHeading id="services-title" as="h2" lines={[`${count} services,`, 'one *accountable* team.']} class="t-h2 svc-title" />
-      <button type="button" class="svc-motion" data-svc-motion hidden>
-        <span class="svc-motion-icon" data-when="playing"><Icon name="pause" size={18} /></span>
-        <span class="svc-motion-icon" data-when="paused"><Icon name="play" size={18} /></span>
-        <span data-svc-motion-label>Pause clips</span>
-      </button>
     </div>
 
     <div class="svc-index" data-svc-index style={`--rows: ${services.length}`}>
@@ -56,7 +51,7 @@ const hasClip = (slot: string) => {
           <div class="svc-media">
             <div class="svc-stage">
               <div class="svc-frame" data-reveal="media">
-                <Video slot={s.video} mode="hover" class="svc-video" />
+                <Video slot={s.video} mode="hover" label={`${s.name} video`} class="svc-video" />
                 {!hasClip(s.video) && (
                   <span class="svc-frame-icon" aria-hidden="true"><Icon name={s.icon} size={56} /></span>
                 )}
@@ -114,39 +109,6 @@ const hasClip = (slot: string) => {
     }
   });
 
-  // WCAG 2.2.2: on touch screens the loops start by themselves while in view, so offer a way to stop them.
-  // Only shown when clips can play at all (motion allowed, no Save-Data); CSS hides it where play is hover-only.
-  const motionOK = document.documentElement.classList.contains('motion-ok');
-  const saveData = Boolean((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData);
-  document.querySelectorAll<HTMLButtonElement>('[data-svc-motion]').forEach((btn) => {
-    const section = btn.closest('section');
-    const videos = section ? Array.from(section.querySelectorAll<HTMLVideoElement>('video[data-video-mode]')) : [];
-    if (!motionOK || saveData || !videos.length) return;
-    const label = btn.querySelector('[data-svc-motion-label]');
-    let paused = false;
-    // motion.ts starts each clip as it scrolls into view; while paused, stop it again the moment it starts.
-    for (const v of videos) {
-      v.addEventListener('play', () => {
-        if (paused) v.pause();
-      });
-    }
-    btn.hidden = false;
-    btn.addEventListener('click', () => {
-      paused = !paused;
-      btn.toggleAttribute('data-paused', paused);
-      if (label) label.textContent = paused ? 'Play clips' : 'Pause clips';
-      if (paused) {
-        for (const v of videos) v.pause();
-        return;
-      }
-      for (const v of videos) {
-        const r = v.getBoundingClientRect();
-        if (v.dataset.attached && r.width > 0 && r.bottom > 0 && r.top < innerHeight) {
-          v.play().then(() => v.classList.add('is-playing')).catch(() => {});
-        }
-      }
-    });
-  });
 </script>
 
 <style>
@@ -166,38 +128,6 @@ const hasClip = (slot: string) => {
   /* SplitHeading renders the heading inside its own scope, so it is styled from a scoped parent. */
   .svc-top :global(.svc-title .accent) {
     color: var(--accent-ink);
-  }
-
-  /* Pause control for auto-playing clips (touch). Hidden where clips only play on hover or focus. */
-  .svc-motion {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    min-height: 2.75rem;
-    padding: 0.5rem 1.05rem 0.5rem 0.85rem;
-    border: 0;
-    border-radius: 999px;
-    background: transparent;
-    box-shadow: inset 0 0 0 1px var(--line-strong);
-    color: var(--text);
-    font: inherit;
-    font-size: 0.875rem;
-    font-weight: 600;
-    line-height: 1.2;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .svc-motion-icon {
-    display: inline-grid;
-  }
-  .svc-motion[data-paused] [data-when='playing'],
-  .svc-motion:not([data-paused]) [data-when='paused'] {
-    display: none;
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .svc-motion {
-      display: none;
-    }
   }
 
   /* ---------- Inline layout (default: touch screens, narrow windows, no JS) ---------- */
@@ -241,14 +171,6 @@ const hasClip = (slot: string) => {
     align-self: flex-start;
     min-height: 2.75rem;
   }
-  /* One link per service; its hit area covers the whole row (the row's text cell in the desktop layout). */
-  .svc-link::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-  }
-
   .svc-frame {
     position: relative;
     overflow: hidden;
@@ -317,6 +239,14 @@ const hasClip = (slot: string) => {
 
   /* ---------- Desktop with a mouse: index on the left, one sticky preview on the right ---------- */
   @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+    /* Stretch over the desktop text cell only. On touch, a row-wide link would
+       intercept the film's own play/pause button. */
+    .svc-index[data-enhanced] .svc-link::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
     .svc-index[data-enhanced] {
       display: grid;
       grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);

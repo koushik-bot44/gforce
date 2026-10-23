@@ -1,9 +1,8 @@
 ---
-// Muted, inline video for a media-manifest slot.
-// mode="hero":   poster is the LCP; motion.ts picks the 540p or 1080p file after load.
-// mode="inview": plays while on screen.  mode="hover": plays on hover/focus of the closest [data-hover-scope] (in view on touch).
-// Sources are attached by motion.ts, never by the parser, so nothing downloads under reduced motion or Save-Data.
+// Poster-first, silent inline media. The shared player owns loading, visibility,
+// decoder limits and visitor intent; controls live on the film they affect.
 import { media } from '../../lib/media';
+import Icon from './Icon.astro';
 
 interface Props {
   slot: string;
@@ -12,15 +11,18 @@ interface Props {
   alt?: string;
   loop?: boolean;
   priority?: boolean;
+  controls?: boolean;
+  label?: string;
 }
 
-const { slot, class: className = '', mode = 'inview', alt = '', loop = true, priority = false, ...rest } = Astro.props;
+const { slot, class: className = '', mode = 'inview', alt = '', loop = true, priority = false, controls = true, label = 'video', ...rest } = Astro.props;
 const entry = media(slot);
 const s = entry?.sources;
 const poster = s?.poster?.jpg ?? s?.poster?.webp;
+const videoId = `film-${slot}-${crypto.randomUUID().slice(0, 8)}`;
 ---
 {entry && s && (s.mp4 || s.webm) ? (
-  <div class={`video-frame ${className}`} {...rest}>
+  <div class={`video-frame ${className}`} data-video-frame {...rest}>
     <picture class="video-poster" aria-hidden="true">
       {s.poster?.avif && <source type="image/avif" srcset={s.poster.avif} />}
       {s.poster?.webp && <source type="image/webp" srcset={s.poster.webp} />}
@@ -36,9 +38,11 @@ const poster = s?.poster?.jpg ?? s?.poster?.webp;
       />
     </picture>
     <video
+      id={videoId}
       class="video-el"
       muted
       playsinline
+      webkit-playsinline
       loop={loop}
       preload="none"
       disablepictureinpicture
@@ -48,8 +52,16 @@ const poster = s?.poster?.jpg ?? s?.poster?.webp;
       data-src-mp4={s.mp4}
       data-src-webm={s.webm}
       data-src-mobile={s.mp4Mobile}
+      data-video-label={label}
       style={entry.objectPosition ? `object-position: ${entry.objectPosition}` : undefined}
     ></video>
+    {controls && (
+      <button type="button" class="video-toggle" data-video-toggle data-state="paused" aria-controls={videoId} aria-label={`Play ${label}`} title={`Play ${label}`} hidden>
+        <span class="video-control-play" aria-hidden="true"><Icon name="play" size={18} /></span>
+        <span class="video-control-pause" aria-hidden="true"><Icon name="pause" size={18} /></span>
+      </button>
+    )}
+    <span class="sr-only" data-video-status aria-live="polite"></span>
   </div>
 ) : (
   <div class={`video-frame video-fallback ${className}`} aria-hidden="true" {...rest}></div>
@@ -72,10 +84,37 @@ const poster = s?.poster?.jpg ?? s?.poster?.webp;
   }
   .video-el {
     opacity: 0;
-    transition: opacity 900ms var(--ease-out-expo);
+    transition: opacity 300ms var(--ease-out-quart);
   }
   .video-el.is-playing {
     opacity: 1;
+  }
+  .video-toggle {
+    position: absolute;
+    inset-inline-end: 0.75rem;
+    bottom: 0.75rem;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid color-mix(in oklab, white 36%, transparent);
+    border-radius: 50%;
+    background: var(--color-ink-900);
+    color: white;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 160ms var(--ease-out-quart);
+  }
+  .video-toggle[hidden] { display: none; }
+  .video-toggle:hover { background: var(--color-ink-950); }
+  .video-toggle:focus-visible { outline: 3px solid white; outline-offset: 3px; }
+  .video-toggle span { display: grid; }
+  .video-toggle[data-state='playing'] .video-control-play,
+  .video-toggle:not([data-state='playing']) .video-control-pause { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .video-el { transition: none; }
   }
   .video-fallback {
     background:

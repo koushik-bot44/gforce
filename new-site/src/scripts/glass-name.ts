@@ -140,7 +140,7 @@ export async function mountGlassName(canvas: HTMLCanvasElement, o: GlassOptions)
   let paused = false;
   let stopped = false;
   const schedule = () => {
-    if (frame || paused || stopped || document.hidden || (progress() === 1 && lastP === 1)) return;
+    if (frame || paused || stopped || document.hidden || progress() === lastP) return;
     frame = requestAnimationFrame(() => { frame = 0; draw(); });
   };
   const onResize = () => { lastP = -1; resize(); schedule(); };
@@ -148,6 +148,7 @@ export async function mountGlassName(canvas: HTMLCanvasElement, o: GlassOptions)
   await renderer.compileAsync(scene, camera);
   draw();
   if (!o.still) {
+    canvas.addEventListener('webglcontextlost', () => { stopped = true; cancelAnimationFrame(frame); });
     addEventListener('scroll', schedule, { passive: true });
     addEventListener('resize', onResize, { passive: true });
     document.addEventListener('visibilitychange', schedule);

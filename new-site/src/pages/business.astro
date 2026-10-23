@@ -122,12 +122,7 @@ const servicesLd = {
         data-scroll-progress="enter"
         data-rest-p="1"
       >
-        <Video slot={managed.video} mode="inview" class="film-video" />
-        <button type="button" class="film-toggle" data-film-toggle data-state="playing" hidden>
-          <span class="film-icon film-icon-pause"><Icon name="pause" size={18} /></span>
-          <span class="film-icon film-icon-play"><Icon name="play" size={18} /></span>
-          <span class="sr-only" data-film-label>Pause the managed IT film</span>
-        </button>
+        <Video slot={managed.video} mode="inview" label="managed IT video" class="film-video" />
       </div>
     </div>
   </section>
@@ -152,12 +147,7 @@ const servicesLd = {
 
       <div class="svc-b-side">
         <div class="film film-portrait" data-film="cybersecurity" data-reveal="media">
-          <Video slot={security.video} mode="inview" class="film-video" />
-          <button type="button" class="film-toggle" data-film-toggle data-state="playing" hidden>
-            <span class="film-icon film-icon-pause"><Icon name="pause" size={18} /></span>
-            <span class="film-icon film-icon-play"><Icon name="play" size={18} /></span>
-            <span class="sr-only" data-film-label>Pause the cybersecurity film</span>
-          </button>
+          <Video slot={security.video} mode="inview" label="cybersecurity video" class="film-video" />
         </div>
         <div class="self-check">
           <h3 class="t-h4">Check your basics first</h3>
@@ -186,12 +176,7 @@ const servicesLd = {
   <section id="cloud-backup" class="svc band-dawn" aria-labelledby="cloud-backup-title">
     <div class="container-g svc-inner svc-c">
       <div class="film film-landscape" data-film="cloud and backup" data-reveal="media">
-        <Video slot={cloud.video} mode="inview" class="film-video" />
-        <button type="button" class="film-toggle" data-film-toggle data-state="playing" hidden>
-          <span class="film-icon film-icon-pause"><Icon name="pause" size={18} /></span>
-          <span class="film-icon film-icon-play"><Icon name="play" size={18} /></span>
-          <span class="sr-only" data-film-label>Pause the cloud and backup film</span>
-        </button>
+        <Video slot={cloud.video} mode="inview" label="cloud and backup video" class="film-video" />
       </div>
       <div class="svc-text svc-panel glass">
         <span class="svc-icon" aria-hidden="true"><Icon name={cloud.icon} size={26} /></span>
@@ -225,12 +210,7 @@ const servicesLd = {
           </a>
         </div>
         <div class="film film-compact" data-film="IT consulting" data-reveal="media">
-          <Video slot={consulting.video} mode="inview" class="film-video" />
-          <button type="button" class="film-toggle" data-film-toggle data-state="playing" hidden>
-            <span class="film-icon film-icon-pause"><Icon name="pause" size={18} /></span>
-            <span class="film-icon film-icon-play"><Icon name="play" size={18} /></span>
-            <span class="sr-only" data-film-label>Pause the IT consulting film</span>
-          </button>
+          <Video slot={consulting.video} mode="inview" label="IT consulting video" class="film-video" />
         </div>
       </div>
       <h3 class="sr-only">Typical projects</h3>
@@ -266,40 +246,6 @@ const servicesLd = {
 
   <ContactSection />
 </Base>
-
-<script>
-  // Pause and play for each service film (WCAG 2.2.2). The control only appears once a film is actually
-  // playing, so under reduced motion or Save-Data, where only posters show, there is nothing to pause.
-  document.querySelectorAll<HTMLElement>('[data-film]').forEach((film) => {
-    const video = film.querySelector('video');
-    const button = film.querySelector<HTMLButtonElement>('[data-film-toggle]');
-    const label = button?.querySelector('[data-film-label]');
-    if (!video || !button || !label) return;
-    const name = film.dataset.film ?? 'service';
-    let held = false; // paused by the visitor, as opposed to scrolled out of view
-
-    const sync = () => {
-      const paused = held || video.paused;
-      button.dataset.state = paused ? 'paused' : 'playing';
-      label.textContent = `${paused ? 'Play' : 'Pause'} the ${name} film`;
-    };
-    video.addEventListener('play', () => {
-      if (held) video.pause(); // the in-view observer tried to resume it
-    });
-    video.addEventListener('playing', () => {
-      video.classList.add('is-playing');
-      button.hidden = false;
-      sync();
-    });
-    video.addEventListener('pause', sync);
-    button.addEventListener('click', () => {
-      held = !held;
-      if (held) video.pause();
-      else video.play().catch(() => {});
-      sync();
-    });
-  });
-</script>
 
 <style>
   /* ---------- Hero extras ---------- */
@@ -423,33 +369,6 @@ const servicesLd = {
   .film-compact {
     aspect-ratio: 16 / 10;
   }
-  .film-toggle {
-    position: absolute;
-    right: 0.75rem;
-    bottom: 0.75rem;
-    z-index: 1;
-    display: grid;
-    place-items: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    border-radius: 50%;
-    border: 1px solid color-mix(in oklch, white 30%, transparent);
-    background: color-mix(in oklch, var(--color-ink-950) 64%, transparent);
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 160ms var(--ease-out-quart);
-  }
-  .film-toggle:hover {
-    background: color-mix(in oklch, var(--color-ink-950) 86%, transparent);
-  }
-  .film-icon {
-    display: grid;
-  }
-  .film-toggle[data-state='playing'] .film-icon-play,
-  .film-toggle[data-state='paused'] .film-icon-pause {
-    display: none;
-  }
-
   /* A: a two-column text block, then the wide film under it. */
   .svc-a {
     display: grid;

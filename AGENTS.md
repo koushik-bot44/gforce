@@ -25,6 +25,11 @@ and `new-site/REQUIREMENTS.md` before substantial changes.
   content that remains readable if motion scripts fail. Avoid decorative dots.
 - Forms use the configured endpoint or explicitly open an email draft. Booking
   uses the supplied URL or a mailto fallback; never imply unverified delivery.
+- The user confirmed `www.gforceit.ca` as the production address. Keep Vercel
+  as a preview, with production canonicals and preview-only noindex headers.
+- Support steps stay readable immediately. Do not hide essential workflow text
+  behind timers. Shared media playback owns per-film controls and visitor pause;
+  mobile plays at most one visible content film, using the smaller H.264 source.
 
 Review desktop/mobile rendering and actual moving sequences. Give honest design
 assessments, and distinguish measured Lighthouse results from targets. Verify

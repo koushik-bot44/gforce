@@ -10,6 +10,7 @@ interface Props {
   title: string;
   description: string;
   image?: string;
+  imageAlt?: string;
   nightHero?: boolean;
   /** Air's sky system: one viewport-fixed sky behind the page; white panels opt in with class "sheet". */
   sky?: boolean;
@@ -25,6 +26,7 @@ const {
   title,
   description,
   image = '/og/og-default.jpg',
+  imageAlt = 'G-Force IT Services. Dependable IT support and practical IT training.',
   nightHero = false,
   sky = false,
   glassHero = false,
@@ -39,14 +41,14 @@ const fullTitle = title.includes('G-Force') ? title : `${title} | G-Force IT Ser
 
 const orgLd = {
   '@context': 'https://schema.org',
-  '@type': 'ProfessionalService',
+  '@type': 'LocalBusiness',
   '@id': `${company.url}/#org`,
   name: 'G-Force IT Services',
   legalName: company.legalName,
   url: company.url,
-  logo: `${company.url}/brand/favicon-512.png`,
+  logo: { '@type': 'ImageObject', url: `${company.url}/brand/logo-schema.png`, width: 1200, height: 240 },
   email: company.email,
-  telephone: '+1-825-606-9777',
+  telephone: company.phoneHref.replace(/^tel:/, ''),
   address: {
     '@type': 'PostalAddress',
     streetAddress: company.address.street,
@@ -56,9 +58,19 @@ const orgLd = {
     addressCountry: company.address.country,
   },
   geo: { '@type': 'GeoCoordinates', latitude: company.geo.lat, longitude: company.geo.lng },
-  openingHours: company.hours.schema,
+  ...(company.hours.confirmed ? { openingHours: company.hours.schema } : {}),
   areaServed: { '@type': 'Country', name: 'Canada' },
   knowsAbout: ['Managed IT services', 'Cybersecurity', 'Cloud migration', 'Data backup', 'IT training'],
+};
+const websiteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${company.url}/#website`,
+  url: `${company.url}/`,
+  name: 'G-Force IT Services',
+  alternateName: company.name,
+  inLanguage: 'en-CA',
+  publisher: { '@id': `${company.url}/#org` },
 };
 ---
 <!doctype html>
@@ -78,10 +90,17 @@ const orgLd = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content={imageAlt} />
+    {image === '/og/og-default.jpg' && <>
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:type" content="image/jpeg" />
+    </>}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={imageAlt} />
     <link rel="preload" href={archivoFont} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/brand/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="icon" href="/brand/favicon-192.png" sizes="192x192" type="image/png" />
@@ -100,6 +119,7 @@ const orgLd = {
       })();
     </script>
     <script type="application/ld+json" set:html={JSON.stringify(orgLd)} />
+    {Astro.url.pathname === '/' && <script type="application/ld+json" set:html={JSON.stringify(websiteLd)} />}
     <slot name="head" />
   </head>
   <body class:list={[{ 'has-night-hero': nightHero, 'has-air-sky': sky, 'has-glass-hero': glassHero }]}>

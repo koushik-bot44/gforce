@@ -19,9 +19,9 @@ const ticket = [
   { text: 'Confirm the outcome and document the work', final: true },
 ];
 ---
-<section class="dawn band-dawn" id="morning" aria-labelledby="dawn-title" data-dawn-stage data-scroll-progress="through" data-rest-p="1">
+<section class="dawn band-dawn" id="morning" aria-labelledby="dawn-title" data-dawn-stage data-video-group data-scroll-progress="through" data-rest-p="1">
   <div class="dawn-atmosphere" aria-hidden="true">
-    <Video slot="sky-daylight" mode="inview" class="dawn-clouds" />
+    <Video slot="sky-daylight" mode="inview" class="dawn-clouds" controls={false} data-video-ambient />
   </div>
   <div class="container-g dawn-head">
     <SplitHeading id="dawn-title" as="h2" lines={['Proactive care.', 'A more dependable *workday.*']} class="t-display dawn-title" />
@@ -34,14 +34,13 @@ const ticket = [
         <Icon name="clock" size={18} />
         <span>Proactive IT care, day and night</span>
       </p>
-      <button type="button" class="shift-pause" data-shift-pause aria-pressed="false" hidden>Pause films</button>
     </div>
   </div>
 
   <div class="container-g">
     <div class="panel" data-tabs data-scroll-progress="enter" data-rest-p="1">
       <div class="panel-media" data-hover-scope>
-        <Video slot="svc-managed-it" mode="inview" class="panel-video" />
+        <Video slot="svc-managed-it" mode="inview" class="panel-video" label="IT systems maintenance video" />
         <p class="panel-caption t-meta">Your systems, looked after by people who know them.</p>
       </div>
 
@@ -65,7 +64,7 @@ const ticket = [
             </ol>
           </div>
 
-          <div class="pane ticket" id="pane-ticket" role="tabpanel" aria-labelledby="tab-ticket" data-ticket hidden inert>
+          <div class="pane ticket" id="pane-ticket" role="tabpanel" aria-labelledby="tab-ticket" hidden inert>
             <p class="pane-title">A clear route to support</p>
             <p class="ticket-meta">A named contact, with response targets in your agreement.</p>
             <ol class="ticket-steps">
@@ -84,26 +83,9 @@ const ticket = [
 </section>
 
 <script>
-  const stage = document.querySelector<HTMLElement>('[data-dawn-stage]');
-  const pause = stage?.querySelector<HTMLButtonElement>('[data-shift-pause]');
-  const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
-  if (stage && pause && document.documentElement.classList.contains('motion-ok') && !saveData) {
-    const films = Array.from(stage.querySelectorAll<HTMLVideoElement>('video'));
-    let paused = false;
-    pause.hidden = false;
-    films.forEach((film) => film.addEventListener('play', () => { if (paused) film.pause(); }));
-    pause.addEventListener('click', () => {
-      paused = !paused;
-      pause.setAttribute('aria-pressed', String(paused));
-      pause.textContent = paused ? 'Play films' : 'Pause films';
-      films.forEach((film) => {
-        if (paused) film.pause();
-        else if (film.dataset.attached) film.play().catch(() => {});
-      });
-    });
-  }
-  // Accessible tabs (arrow keys, Home/End) with an overlapped crossfade: the incoming pane is visible before the outgoing one leaves.
-  document.querySelectorAll<HTMLElement>('[data-tabs]').forEach((root) => {
+  // Select panels synchronously. Delayed hide callbacks could hide a panel that
+  // had just been selected again during rapid tapping or arrow-key navigation.
+  document.querySelectorAll<HTMLElement>('[data-dawn-stage] [data-tabs]').forEach((root) => {
     const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
     const pill = root.querySelector<HTMLElement>('.tabs-pill');
     const place = (t: HTMLElement) => {
@@ -116,17 +98,10 @@ const ticket = [
         const on = t === tab;
         t.setAttribute('aria-selected', String(on));
         t.tabIndex = on ? 0 : -1;
-        const pane = document.getElementById(t.getAttribute('aria-controls')!)!;
+        const pane = root.querySelector<HTMLElement>(`#${t.getAttribute('aria-controls')}`)!;
         pane.inert = !on;
-        if (on) {
-          pane.hidden = false;
-          requestAnimationFrame(() => pane.classList.add('is-active'));
-        } else {
-          pane.classList.remove('is-active');
-          setTimeout(() => {
-            if (!pane.classList.contains('is-active')) pane.hidden = true;
-          }, 200);
-        }
+        pane.hidden = !on;
+        pane.classList.toggle('is-active', on);
       });
       place(tab);
       if (focus) tab.focus();
@@ -147,7 +122,8 @@ const ticket = [
       });
     });
     const active = tabs.find((t) => t.getAttribute('aria-selected') === 'true') ?? tabs[0];
-    place(active);
+    select(active);
+    document.fonts.ready.then(() => place(tabs.find((t) => t.getAttribute('aria-selected') === 'true') ?? tabs[0]));
     addEventListener('resize', () => place(tabs.find((t) => t.getAttribute('aria-selected') === 'true') ?? tabs[0]), { passive: true });
   });
 </script>
@@ -204,21 +180,6 @@ const ticket = [
     font-size: 0.875rem;
     color: var(--text);
   }
-  .shift-time {
-    min-width: 5ch;
-    font-weight: 650;
-  }
-  .shift-pause {
-    min-height: 2.75rem;
-    padding: 0.5rem 0.85rem;
-    border: 1px solid var(--line-strong);
-    border-radius: 999px;
-    background: transparent;
-    color: var(--text);
-    font: inherit;
-    font-size: 0.8125rem;
-    cursor: pointer;
-  }
 
   /* Air's product-panel entrance, driven by the panel's own position: the window opens and rises while it is on
      screen (fully open once its top passes 60% of the viewport). Only transform and clip-path change; under
@@ -242,6 +203,8 @@ const ticket = [
   }
   .panel-media {
     position: relative;
+    min-width: 0;
+    width: 100%;
     min-height: 16rem;
     aspect-ratio: 16 / 11;
     background: var(--sky-gradient);
@@ -254,8 +217,9 @@ const ticket = [
     position: absolute;
     left: 1rem;
     bottom: 1rem;
-    right: 1rem;
+    right: 4.5rem;
     color: #fff;
+    pointer-events: none;
     text-shadow: 0 1px 12px rgb(0 0 0 / 0.35);
   }
   .panel-side {
@@ -309,12 +273,9 @@ const ticket = [
   }
   .pane {
     grid-area: 1 / 1;
-    opacity: 0;
-    transition: opacity 160ms var(--ease-exit);
   }
-  .pane.is-active {
-    opacity: 1;
-    transition: opacity 260ms var(--ease-out-expo);
+  .pane[hidden] {
+    display: none;
   }
   .pane-title {
     font-size: 1.125rem;
@@ -336,11 +297,6 @@ const ticket = [
     font-size: 0.9375rem;
     line-height: 1.45;
   }
-  .log time,
-  .ticket-steps time {
-    color: var(--color-mist-600);
-    font-size: 0.875rem;
-  }
   .log-check {
     display: inline-grid;
     place-items: center;
@@ -355,40 +311,6 @@ const ticket = [
   .log li[data-complete='false'] .log-check {
     background: var(--color-air-haze);
     color: var(--color-mist-600);
-  }
-  .ticket-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-  }
-  .ticket-state {
-    display: inline-grid;
-    font-size: 0.75rem;
-    font-weight: 650;
-  }
-  .ticket-state > span {
-    grid-area: 1 / 1;
-    padding: 0.2rem 0.6rem;
-    border-radius: 999px;
-    transition: opacity 260ms var(--ease-out-expo);
-  }
-  .ticket-state-open {
-    background: var(--color-air-haze);
-    color: var(--color-mist-600);
-  }
-  .ticket-state-done {
-    background: var(--color-crimson-100);
-    color: var(--color-crimson-700);
-    opacity: 0;
-  }
-  .ticket:global(.is-resolved) .ticket-state-open,
-  :global(html:not(.motion-ok)) .ticket-state-open {
-    opacity: 0;
-  }
-  .ticket:global(.is-resolved) .ticket-state-done,
-  :global(html:not(.motion-ok)) .ticket-state-done {
-    opacity: 1;
   }
   .ticket-meta {
     margin-top: 0.2rem;
@@ -423,22 +345,6 @@ const ticket = [
     border-radius: 999px;
     background: var(--color-crimson-100);
     color: var(--color-crimson-700);
-  }
-  :global(.motion-ok) .ticket[data-workflow-ready] .ticket-steps li {
-    opacity: 0;
-    transform: translate3d(0, 12px, 0);
-    transition:
-      opacity 280ms var(--ease-out-expo),
-      transform 280ms var(--ease-out-expo);
-  }
-  :global(.motion-ok) .ticket-steps li:global(.is-on) {
-    opacity: 1;
-    transform: none;
-  }
-  :global(.motion-ok) .ticket:global(.is-fading) .ticket-steps li {
-    opacity: 0;
-    transition-duration: 300ms;
-    transition-timing-function: var(--ease-exit);
   }
   @media (min-width: 900px) {
     .panel {

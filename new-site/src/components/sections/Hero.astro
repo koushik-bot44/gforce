@@ -44,40 +44,59 @@ import { hero } from '../../data/site';
     document.body.append(art);
     art.classList.add('is-portal');
     let queued = false;
+    let live = false;
+    let lost = false;
+    let lastProgress = -1;
+    let w = innerWidth;
+    let h = innerHeight;
+    let heroTop = 0;
     let targetWidth = 160;
     let targetX = innerWidth / 2;
     const measure = () => {
       const logo = document.querySelector('.site-header .logo')!.getBoundingClientRect();
+      w = art.clientWidth || innerWidth;
+      h = art.clientHeight || innerHeight;
+      heroTop = hero.getBoundingClientRect().top + scrollY;
       targetWidth = Math.min(160, logo.width * .7);
       targetX = logo.left + logo.width / 2;
+      hero.style.setProperty('--air-brand-x', String(targetX));
+      hero.style.setProperty('--air-brand-width', String(targetWidth));
+      lastProgress = -1;
     };
+    poster.style.left = '0';
+    poster.style.top = '0';
     measure();
     const sync = () => {
       queued = false;
-      const h = art.clientHeight || innerHeight;
-      const w = art.clientWidth || innerWidth;
-      const rect = hero.getBoundingClientRect();
-      const p = Math.min(1, Math.max(0, -rect.top / h));
+      const p = Math.min(1, Math.max(0, (scrollY - heroTop) / h));
+      if (p === lastProgress) return;
+      lastProgress = p;
       const fill = w <= 700 ? .94 : .86;
       const scale = Math.exp(Math.log(Math.min(.5, targetWidth / (w * fill))) * p);
       const start = w <= 700 ? h * .56 : h * .62;
       const y = start + (36 - start) * (1 - Math.pow(1 - p, 2));
       hero.style.setProperty('--air-p', p.toFixed(5));
       art.style.opacity = String(1 - Math.min(1, Math.max(0, (p - .65) / .28)));
-      hero.style.setProperty('--air-brand-x', String(targetX));
-      hero.style.setProperty('--air-brand-width', String(targetWidth));
-      const lateral = 1 - Math.pow(1 - Math.min(1, Math.max(0, (p - .45) / .35)), 3);
-      poster.style.left = `${w / 2 + (targetX - w / 2) * lateral}px`;
-      poster.style.clipPath = p > .58 ? 'inset(0 0 20% 0)' : 'none';
-      poster.style.top = `${y}px`;
-      poster.style.transform = `translate(-50%, -50%) scale(${scale}) rotateY(${p * 360}deg)`;
-      root.classList.toggle('glass-logo-away', rect.bottom < 100);
+      if (!live) {
+        const lateral = 1 - Math.pow(1 - Math.min(1, Math.max(0, (p - .45) / .35)), 3);
+        const x = w / 2 + (targetX - w / 2) * lateral;
+        poster.style.clipPath = p > .58 ? 'inset(0 0 20% 0)' : 'none';
+        poster.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) scale(${scale}) rotateY(${p * 360}deg)`;
+      }
     };
     const schedule = () => { if (!queued) { queued = true; requestAnimationFrame(sync); } };
     sync();
     addEventListener('scroll', schedule, { passive: true });
     addEventListener('resize', () => { measure(); schedule(); }, { passive: true });
     document.fonts.ready.then(() => { measure(); sync(); });
+    canvas.addEventListener('webglcontextlost', () => {
+      lost = true;
+      live = false;
+      canvas.classList.remove('is-ready');
+      poster.classList.remove('is-live');
+      lastProgress = -1;
+      sync();
+    });
 
     const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
     const capable = matchMedia('(pointer: fine)').matches || (navigator.hardwareConcurrency ?? 4) >= 6;
@@ -86,11 +105,19 @@ import { hero } from '../../data/site';
       // No eager WebGL probe: reduced-motion and data-saving visits never create a GPU context.
       let booted = false;
       const boot = () => {
-        if (booted || hero.getBoundingClientRect().bottom < 0) return;
+        // A fast swipe or deep anchor may skip the artwork entirely. Keep the
+        // complete poster and avoid initializing an already invisible GPU scene.
+        if (booted || scrollY - heroTop >= h * .93) return;
         booted = true;
         ['pointerdown', 'wheel', 'keydown', 'scroll'].forEach(type => removeEventListener(type, boot));
         import('../../scripts/glass-name').then(({ mountGlassName }) => mountGlassName(canvas, { ...heroScene(innerWidth), progressEl: hero }))
-          .then(() => { sync(); canvas.classList.add('is-ready'); poster.classList.add('is-live'); })
+          .then((scene) => {
+            if (lost) { scene.stop(); return; }
+            sync();
+            live = true;
+            canvas.classList.add('is-ready');
+            poster.classList.add('is-live');
+          })
           .catch(() => { /* A complete, scroll-linked poster stays usable when WebGL cannot start. */ });
       };
       ['pointerdown', 'wheel', 'keydown', 'scroll'].forEach(type => addEventListener(type, boot, { passive: true }));
