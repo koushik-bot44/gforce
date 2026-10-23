@@ -135,8 +135,14 @@ establish correct media behaviour or WCAG certification.
 - [Mobile Lighthouse](review/2026-10-23/client-hero/lighthouse-mobile.html)
 - [Throttled scroll sample](review/2026-10-23/production/intro-scroll.json)
 
-The Vercel preview is https://gforce-kappa.vercel.app/. The transparent client-row
-application commit `d818471` deployed Ready as `dpl_MwhYe1Q9niAbNTNyjxcurQbLaxeW`.
+The Vercel preview is https://gforce-kappa.vercel.app/. The automatic-scroll and
+reload application commit `604cc16` deployed Ready as
+`dpl_8Y6YqVWGUsaQeGWs3L2Ups8Nm1Jz`. Live Chrome desktop and WebKit mobile pass
+continued motion on hover, no manual scrolling, reload at the top, home intro
+replay and Back restoration after leaving a reloaded page. No JavaScript errors.
+[Current live checks](review/2026-10-23/client-hero/automatic-reload-live.json).
+
+The preceding transparent-style application commit `d818471` deployed Ready as `dpl_MwhYe1Q9niAbNTNyjxcurQbLaxeW`.
 Three live Chrome/WebKit checks passed: all 21 prepared marks load inside the
 hero without buttons, cards, overflow or JavaScript errors.
 [Live client-row verification](review/2026-10-23/client-hero/live-smoke.json)

@@ -31,3 +31,9 @@ Verification on the local production build:
 Evidence: `automatic-scroll-results.json`, `reload-results.json`,
 `lighthouse-mobile-automatic.json`. Older manual-scrolling checks are historical
 and do not describe the latest interaction model.
+
+Application commit `604cc16` deployed Ready as
+`dpl_8Y6YqVWGUsaQeGWs3L2Ups8Nm1Jz` at https://gforce-kappa.vercel.app/.
+Live Chrome desktop and WebKit mobile both pass continuous motion on hover,
+no manual scrolling, reload to zero, intro replay, and Back restoration after
+leaving a reloaded page. No JavaScript errors. See `automatic-reload-live.json`.
