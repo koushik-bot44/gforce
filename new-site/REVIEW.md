@@ -112,9 +112,15 @@ establish correct media behaviour or WCAG certification.
 - [Mobile Lighthouse](review/2026-10-23/production/intro-lighthouse-mobile.html)
 - [Throttled scroll sample](review/2026-10-23/production/intro-scroll.json)
 
-The Vercel preview is https://gforce-kappa.vercel.app/. Deployment verification
-for this revision follows the push; local scores above describe the local
-production build. The custom domain remains on its old host and requires a
+The Vercel preview is https://gforce-kappa.vercel.app/. Application commit
+`bb4f156` deployed Ready as `dpl_8sLxo2BqjBHcAeuZNzh7koeGacFK`. The deployed hero
+asset matches the tested build byte for byte. Five focused live intro checks and
+four live media suites across Chrome/WebKit passed; all service clips play and
+complete, and the cybersecurity still displays correctly. All ten video
+variants return the expected sizes and support byte ranges. Live canonicals and
+preview-only noindex headers are correct. See [live verification](review/2026-10-23/production/live-brief/README.md)
+and [deployment/asset/SEO checks](review/2026-10-23/production/live-brief/deployment-assets-seo.json).
+The Lighthouse scores above describe the local production build. The custom domain remains on its old host and requires a
 separate domain/DNS cutover. No domain settings were changed. Form delivery and
 booking still require the client's real endpoint/URL; current fallbacks clearly
 open an email draft.
