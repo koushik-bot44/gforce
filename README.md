@@ -6,7 +6,7 @@ The deployment configuration builds and publishes the Astro application.
 
 ## Local development
 
-Use Node.js 22.23.1 or a newer supported Node release. From the repository root:
+Use Node.js 24.x (the deployment version). From the repository root:
 
 ```sh
 npm --prefix new-site ci
@@ -58,9 +58,8 @@ For local development, copy `new-site/.env.example` to `new-site/.env`.
 Start with [`new-site/PROJECT_HANDOFF.md`](new-site/PROJECT_HANDOFF.md),
 [`PRODUCT.md`](new-site/PRODUCT.md), [`DESIGN.md`](new-site/DESIGN.md) and
 [`REVIEW.md`](new-site/REVIEW.md). Source-media credits are recorded in the two
-`MEDIA_LICENSES` documents. Sample claims, testimonials and case studies remain
-labelled until G-Force supplies confirmed content.
+`MEDIA_LICENSES` documents. Unverified claims, testimonials, client affiliations
+and case studies are omitted from the public site until G-Force confirms them.
 
 Dependencies, generated builds, local secrets and browser recordings are
 excluded from Git. Review screenshots and JSON reports remain available.
-# gforce

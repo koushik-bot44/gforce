@@ -1,0 +1,218 @@
+---
+// The opening follows Air: a viewport-sized sculpture retreats with scroll while the next headline enters in normal flow.
+import SplitHeading from '../ui/SplitHeading.astro';
+import Icon from '../ui/Icon.astro';
+import { hero } from '../../data/site';
+---
+<section class="hero band-dawn" data-dawn-hero aria-labelledby="hero-title">
+  <div class="hero-clouds" aria-hidden="true"></div>
+  <div class="hero-art">
+    <picture class="hero-poster">
+      <source media="(max-width: 700px)" type="image/avif" srcset="/3d/hero-poster-original-mobile.avif" />
+      <source media="(max-width: 700px)" type="image/webp" srcset="/3d/hero-poster-original-mobile.webp" />
+      <source type="image/avif" srcset="/3d/hero-poster-original-1280.avif 1280w, /3d/hero-poster-original-1600.avif 1600w, /3d/hero-poster-original-2560.avif 2560w" sizes="94vw" />
+      <img src="/3d/hero-poster-original-1600.webp" srcset="/3d/hero-poster-original-1280.webp 1280w, /3d/hero-poster-original-1600.webp 1600w, /3d/hero-poster-original-2560.webp 2560w" sizes="94vw" alt="G-Force IT Services Inc. sculpted in clear glass" width="1600" height="364" fetchpriority="high" decoding="async" />
+    </picture>
+    <canvas class="hero-glass" data-glass-name aria-hidden="true"></canvas>
+  </div>
+  <div class="hero-spacer" aria-hidden="true"></div>
+  <a class="hero-scroll" href="#hero-title"><span>Scroll to explore</span><Icon name="arrow" size={18} /></a>
+
+  <div class="container-g hero-inner">
+    <div class="hero-copy">
+      <SplitHeading id="hero-title" as="h1" lines={hero.lines} class="hero-title" />
+      <p class="hero-sub">{hero.sub}</p>
+      <p class="hero-sub-short">{hero.subShort}</p>
+    </div>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href={hero.primary.href}>{hero.primary.label}<span class="btn-arrow"><Icon name="arrow" size={18} /></span></a>
+      <a class="btn btn-secondary" href={hero.secondary.href}>{hero.secondary.label}</a>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  import { heroScene } from '../../lib/hero-scene';
+  const root = document.documentElement;
+  const hero = document.querySelector<HTMLElement>('.hero');
+  const art = hero?.querySelector<HTMLElement>('.hero-art');
+  const poster = hero?.querySelector<HTMLElement>('.hero-poster');
+  const canvas = hero?.querySelector<HTMLCanvasElement>('canvas');
+  const motion = root.classList.contains('motion-ok');
+  if (hero && art && poster && canvas && motion) {
+    document.body.append(art);
+    art.classList.add('is-portal');
+    let queued = false;
+    let targetWidth = 160;
+    let targetX = innerWidth / 2;
+    const measure = () => {
+      const logo = document.querySelector('.site-header .logo')!.getBoundingClientRect();
+      targetWidth = Math.min(160, logo.width * .7);
+      targetX = logo.left + logo.width / 2;
+    };
+    measure();
+    const sync = () => {
+      queued = false;
+      const h = art.clientHeight || innerHeight;
+      const w = art.clientWidth || innerWidth;
+      const rect = hero.getBoundingClientRect();
+      const p = Math.min(1, Math.max(0, -rect.top / h));
+      const fill = w <= 700 ? .94 : .86;
+      const scale = Math.exp(Math.log(Math.min(.5, targetWidth / (w * fill))) * p);
+      const start = w <= 700 ? h * .56 : h * .62;
+      const y = start + (36 - start) * (1 - Math.pow(1 - p, 2));
+      hero.style.setProperty('--air-p', p.toFixed(5));
+      art.style.opacity = String(1 - Math.min(1, Math.max(0, (p - .65) / .28)));
+      hero.style.setProperty('--air-brand-x', String(targetX));
+      hero.style.setProperty('--air-brand-width', String(targetWidth));
+      const lateral = 1 - Math.pow(1 - Math.min(1, Math.max(0, (p - .45) / .35)), 3);
+      poster.style.left = `${w / 2 + (targetX - w / 2) * lateral}px`;
+      poster.style.clipPath = p > .58 ? 'inset(0 0 20% 0)' : 'none';
+      poster.style.top = `${y}px`;
+      poster.style.transform = `translate(-50%, -50%) scale(${scale}) rotateY(${p * 360}deg)`;
+      root.classList.toggle('glass-logo-away', rect.bottom < 100);
+    };
+    const schedule = () => { if (!queued) { queued = true; requestAnimationFrame(sync); } };
+    sync();
+    addEventListener('scroll', schedule, { passive: true });
+    addEventListener('resize', () => { measure(); schedule(); }, { passive: true });
+    document.fonts.ready.then(() => { measure(); sync(); });
+
+    const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+    const capable = matchMedia('(pointer: fine)').matches || (navigator.hardwareConcurrency ?? 4) >= 6;
+    if (capable && !connection?.saveData && !/2g/.test(connection?.effectiveType ?? '')) {
+      // At rest Air's mark is still. Paint its poster first, and initialize interactive 3D only on visitor intent.
+      // No eager WebGL probe: reduced-motion and data-saving visits never create a GPU context.
+      let booted = false;
+      const boot = () => {
+        if (booted || hero.getBoundingClientRect().bottom < 0) return;
+        booted = true;
+        ['pointerdown', 'wheel', 'keydown', 'scroll'].forEach(type => removeEventListener(type, boot));
+        import('../../scripts/glass-name').then(({ mountGlassName }) => mountGlassName(canvas, { ...heroScene(innerWidth), progressEl: hero }))
+          .then(() => { sync(); canvas.classList.add('is-ready'); poster.classList.add('is-live'); })
+          .catch(() => { /* A complete, scroll-linked poster stays usable when WebGL cannot start. */ });
+      };
+      ['pointerdown', 'wheel', 'keydown', 'scroll'].forEach(type => addEventListener(type, boot, { passive: true }));
+    }
+  }
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    clip-path: inset(0);
+    padding-top: var(--header-h);
+  }
+  :global(html[data-theme]) .hero {
+    color-scheme: light;
+    --text: var(--color-air-ink);
+    --text-muted: var(--color-air-copy);
+    --accent: var(--color-crimson-500);
+    --accent-hover: var(--color-crimson-600);
+    --accent-press: var(--color-crimson-700);
+    --btn-text: #fff;
+    --accent-ink: var(--color-crimson-700);
+    --line: color-mix(in oklch, var(--color-air-ink) 16%, transparent);
+    --line-strong: color-mix(in oklch, var(--color-air-ink) 35%, transparent);
+    --focus: var(--color-crimson-700);
+    color: var(--text);
+  }
+  :global(body.has-air-sky) .hero {
+    background-color: var(--color-dawn-200);
+    background-image: var(--dawn-gradient);
+  }
+  .hero-clouds {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: image-set(url('/media/img/hero-cloud-contrast.avif') type('image/avif'), url('/media/img/hero-cloud-contrast.webp') type('image/webp')), var(--dawn-gradient);
+    background-size: cover;
+    background-position: center top;
+    background-blend-mode: screen;
+    opacity: .7;
+    mask-image: linear-gradient(180deg, black, black 38%, transparent 95%);
+  }
+  .hero-art {
+    position: relative;
+    height: clamp(18rem, 36vw, 30rem);
+    width: 100%;
+    pointer-events: none;
+  }
+  .hero-poster {
+    position: absolute;
+    width: min(94vw, 1440px);
+    aspect-ratio: 4.4 / 1;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transform-origin: center;
+    transition: opacity 180ms linear;
+  }
+  .hero-poster img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .hero-poster:global(.is-live) { opacity: 0; }
+  .hero-glass { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 180ms linear; }
+  .hero-glass:global(.is-ready) { opacity: 1; }
+  .hero-spacer, .hero-scroll { display: none; }
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    justify-items: center;
+    gap: 1.75rem;
+    text-align: center;
+    padding-block: 1rem clamp(5rem, 8vw, 8rem);
+  }
+  .hero-copy { display: grid; justify-items: center; }
+  .hero-copy :global(.hero-title) {
+    max-width: 28ch;
+    font-size: clamp(2.1rem, 1rem + 3.1vw, 3.75rem);
+    font-weight: 560;
+    line-height: 1.08;
+    letter-spacing: -.03em;
+    scroll-margin-top: 12rem;
+  }
+  .hero-sub { max-width: 62ch; margin-top: 1.25rem; font-size: 1.0625rem; line-height: 1.6; color: var(--text-muted); }
+  .hero-sub-short { display: none; max-width: 42ch; margin-top: 1rem; font-size: 1rem; line-height: 1.5; color: var(--text-muted); }
+  .hero-ctas { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .75rem; }
+  .hero-proof { display: flex; align-items: center; gap: .75rem; margin-top: .25rem; }
+  .hero-stat { display: inline-flex; align-items: baseline; font-size: 1.5rem; font-weight: 650; line-height: 1; }
+  .hero-stat-label { max-width: 24ch; font-size: .8125rem; line-height: 1.35; text-align: left; }
+  .fn-ref { position: relative; margin-left: .1em; font-size: .65em; align-self: flex-start; text-decoration: none; }
+  .fn-ref::after { content: ''; position: absolute; inset: -.6rem -.5rem; }
+  .hero-footnote { max-width: 75ch; color: var(--text-muted); font-size: .75rem; line-height: 1.5; }
+  :global(.motion-ok) .hero { padding-top: 0; background-image: none !important; }
+  :global(.motion-ok) .hero::before { content: ''; position: fixed; inset: 0; height: 100svh; background-image: var(--dawn-gradient); z-index: -2; }
+  :global(.motion-ok) .hero-inner { padding-top: clamp(5rem, 12svh, 8rem); }
+  .hero-art:global(.is-portal) { z-index: calc(var(--z-sticky) + 1); }
+  :global(.motion-ok) .hero-art { position: fixed; inset: 0; height: 100svh; }
+  :global(.motion-ok) .hero-clouds { position: fixed; height: 100svh; }
+  :global(.motion-ok) .hero-poster { width: 91.4894vw; top: 62%; }
+  :global(.motion-ok) .hero-spacer { display: block; height: 108svh; }
+  :global(.motion-ok) .hero-scroll {
+    display: flex;
+    position: absolute;
+    top: calc(100svh - 4.5rem);
+    left: var(--gutter);
+    z-index: 1;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: .75rem;
+    color: var(--text);
+    font-size: .8125rem;
+    text-decoration: none;
+  }
+  .hero-scroll :global(svg) { transform: rotate(90deg); }
+  @media (max-width: 700px) {
+    .hero-art { height: 19rem; }
+    .hero-copy :global(.hero-title) { font-size: clamp(1.8rem, 1rem + 3.8vw, 2.5rem); }
+    .hero-sub { display: none; }
+    .hero-sub-short { display: block; }
+    .hero-ctas { max-width: 25rem; }
+    .hero-proof { gap: .6rem; }
+    :global(.motion-ok) .hero-poster { width: 100vw; top: 56%; }
+  }
+</style>

@@ -1,0 +1,265 @@
+---
+// Client-logo band (PDF: grayscale marquee). Air's treatment: one-colour marks at one height, no colour on hover.
+// These are the logos the current site publishes under "Our clients". Defunct brands are skipped, and every
+// relationship needs written confirmation before launch (PRODUCT.md truth rules), hence the pending marker.
+//
+// The marks are transparent single-colour PNGs (/logos/clients/mono/, #1B1B1B, trimmed to the mark), made from the
+// published rasters: a boxed logo keeps its glyphs and loses its box, so no mark renders as a grey slab. They sit
+// at .55 on light surfaces and invert to light at .7 on sky bands and in the dark theme.
+//
+// Progressive enhancement: the default render is a wrapped, centred grid (no JS, reduced motion, automated
+// browsers). Only under .motion-ok, where the Pause control works, does it become a 45 s loop with an
+// aria-hidden duplicate copy, edge fades and a visible Pause/Play button (WCAG 2.2.2).
+// The first copy is the accessible list: real <img> elements named by alt. Logos are not links, so they are
+// not tab stops; keyboard focus lands only on the control.
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import Icon from '../ui/Icon.astro';
+import { clientLogos } from '../../data/site';
+
+interface Props {
+  id?: string;
+  class?: string;
+  /** Shows the "Pending client confirmation" marker until each organization has confirmed in writing. */
+  pending?: boolean;
+}
+
+const { id = 'client-logos', class: className = '', pending = true } = Astro.props;
+
+// Marks that stop reading as their brand once they are one colour at 28px: The Home Depot (diagonal type in a
+// square), Rent-A-Center (ring badge) and Nolan (the tag under the disc). Kept in site.ts, not shown.
+const HIDE = new Set(['12.jpg', '18.jpg', '24.gif']);
+
+// Each mark's pixel size, read from its PNG header at build time, so its box is reserved before the image arrives.
+const sizeOf = (src: string) => {
+  try {
+    const png = readFileSync(join(process.cwd(), 'public', src));
+    return { width: png.readUInt32BE(16), height: png.readUInt32BE(20) };
+  } catch {
+    return {};
+  }
+};
+
+const logos = clientLogos
+  .filter((logo) => !logo.defunct && !HIDE.has(logo.file))
+  .map((logo) => {
+    const src = `/logos/clients/mono/${logo.file.replace(/\.(gif|jpg)$/i, '.png')}`;
+    return { ...logo, src, size: sizeOf(src) };
+  });
+const titleId = `${id}-title`;
+const viewportId = `${id}-viewport`;
+---
+{!pending && logos.length > 0 && <div class:list={['marquee', className]} data-marquee>
+  <div class="container-g marquee-head" data-reveal="fade">
+    <h3 id={titleId} class="t-h4 marquee-title">Organizations we have worked with</h3>
+    <button
+      type="button"
+      class="marquee-toggle"
+      data-marquee-toggle
+      aria-controls={viewportId}
+      aria-pressed="false"
+    >
+      <span class="mt-icon mt-icon-pause"><Icon name="pause" size={16} /></span>
+      <span class="mt-icon mt-icon-play"><Icon name="play" size={16} /></span>
+      <span class="mt-text"><span data-label>Pause</span><span class="sr-only">&nbsp;logo animation</span></span>
+    </button>
+  </div>
+
+  <div id={viewportId} class="marquee-viewport">
+    <div class="marquee-track">
+      <ul class="marquee-list" role="list" aria-labelledby={titleId}>
+        {logos.map((logo) => (
+          <li class="logo">
+            <img src={logo.src} alt={logo.name} {...logo.size} loading="lazy" decoding="async" fetchpriority="low" />
+          </li>
+        ))}
+      </ul>
+      <ul class="marquee-list marquee-dup" role="list" aria-hidden="true">
+        {logos.map((logo) => (
+          <li class="logo">
+            <img src={logo.src} alt="" {...logo.size} loading="lazy" decoding="async" fetchpriority="low" />
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</div>}
+
+<script>
+  // In the loop, logos slide in from beyond the clipped edge, where native lazy loading would leave empty slots.
+  // Once the band is about a screen away, load every logo (21 small files, ~57 KB in total).
+  // The loop also rests while the band is off screen (separate from the visitor's own Pause, which wins).
+  document.querySelectorAll<HTMLElement>('[data-marquee]').forEach((band) => {
+    if (!('IntersectionObserver' in window)) return;
+    const near = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        band.querySelectorAll('img').forEach((img) => (img.loading = 'eager'));
+        near.disconnect();
+      },
+      { rootMargin: '100% 0px' },
+    );
+    near.observe(band);
+    const viewport = band.querySelector<HTMLElement>('.marquee-viewport');
+    if (!viewport) return;
+    new IntersectionObserver((entries) => {
+      for (const e of entries) viewport.classList.toggle('is-offscreen', !e.isIntersecting);
+    }).observe(viewport);
+  });
+</script>
+
+<style>
+  .marquee {
+    --logo-gap: 1.25rem;
+    --loop-gap: 2.25rem;
+    --marquee-fade: 2.5rem;
+    --marquee-dur: 45s;
+  }
+  @media (min-width: 768px) {
+    .marquee {
+      --logo-gap: 3rem;
+      --loop-gap: 3.5rem;
+      --marquee-fade: 7rem;
+    }
+  }
+
+  .marquee-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem 0.9rem;
+    margin-bottom: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
+  }
+  .marquee-title {
+    margin: 0;
+  }
+
+  /* Pause/Play: only shown when something actually moves. */
+  .marquee-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    min-width: 6.25rem;
+    min-height: 2.75rem;
+    margin-inline-start: auto;
+    padding: 0 1rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    box-shadow: inset 0 0 0 1px var(--line-strong);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .marquee-toggle:hover {
+    box-shadow: inset 0 0 0 1px var(--text);
+  }
+  .mt-icon {
+    display: grid;
+  }
+  .mt-icon-play,
+  .marquee-toggle[aria-pressed='true'] .mt-icon-pause {
+    display: none;
+  }
+  .marquee-toggle[aria-pressed='true'] .mt-icon-play {
+    display: grid;
+  }
+
+  .marquee-viewport {
+    position: relative;
+    overflow: hidden;
+    overflow: clip;
+    padding-block: 0.4rem;
+  }
+  /* The marks are transparent, so the track needs no ground of its own; a host may still paint it (--marquee-bg). */
+  .marquee-track {
+    background-color: var(--marquee-bg, transparent);
+  }
+
+  /* Resting state: a wrapped, centred grid of one copy. */
+  .marquee-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem var(--logo-gap);
+    width: min(100% - 2 * var(--gutter), 1240px);
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+  .marquee-dup {
+    display: none;
+  }
+
+  /* One height for every mark: each PNG is trimmed to its mark, so the visible marks line up. */
+  .logo {
+    flex: none;
+    height: 28px;
+    width: auto;
+    aspect-ratio: auto;
+  }
+  .logo img {
+    display: block;
+    height: 100%;
+    width: auto;
+    max-width: none;
+    filter: none;
+    mix-blend-mode: normal;
+    opacity: 0.55;
+  }
+  /* Sky bands and the dark theme: the ink marks invert to light. */
+  :global([data-theme='dark']) .logo img,
+  :global(.band-night) .logo img {
+    filter: invert(1);
+    opacity: 0.7;
+  }
+
+  /* The loop: only with motion allowed and JS running (so the Pause control works). */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.motion-ok) .marquee-toggle {
+      display: inline-flex;
+    }
+    :global(.motion-ok) .marquee-viewport {
+      -webkit-mask-image: linear-gradient(90deg, transparent, black var(--marquee-fade), black calc(100% - var(--marquee-fade)), transparent);
+      mask-image: linear-gradient(90deg, transparent, black var(--marquee-fade), black calc(100% - var(--marquee-fade)), transparent);
+    }
+    :global(.motion-ok) .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: gf-marquee var(--marquee-dur) linear infinite;
+      will-change: transform;
+    }
+    :global(.motion-ok) .marquee-list {
+      flex-wrap: nowrap;
+      gap: var(--loop-gap);
+      width: auto;
+      margin: 0;
+      padding: 0 var(--loop-gap) 0 0;
+    }
+    :global(.motion-ok) .marquee-dup {
+      display: flex;
+    }
+    .marquee-viewport.is-paused .marquee-track,
+    .marquee-viewport.is-offscreen .marquee-track,
+    .marquee-viewport:focus-within .marquee-track {
+      animation-play-state: paused;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) and (hover: hover) {
+    .marquee-viewport:hover .marquee-track {
+      animation-play-state: paused;
+    }
+  }
+  /* Two identical copies side by side: -50% lands exactly on the start of the second copy. */
+  @keyframes gf-marquee {
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+</style>
