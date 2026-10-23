@@ -1,6 +1,20 @@
 # G-Force IT: opening, media and final review
 
-23 October 2026. This pass implements the approved fresh-load introduction,
+23 October 2026. Latest follow-up: restored the client-company row inside the
+hero below its actions. The user then selected the earlier transparent
+single-colour logo treatment and requested no Pause button. The 21 existing
+prepared wordmarks are reused without white cards. Direct interaction stops the
+loop and exposes native browsing; reduced motion remains still. The original
+28-company list and assets remain in source. The business page shares this row.
+Sample figures/testimonials/cases remain omitted. This supersedes the older
+omission of the client strip described below.
+
+The [client-row follow-up](review/2026-10-23/client-hero/README.md) records 16
+Chrome/WebKit cases, two focused intro checks and new Lighthouse reports with
+this row enabled: desktop 100/mobile 99, accessibility/best practices/SEO 100,
+mobile LCP 2.2s, TBT 0ms and CLS 0.
+
+This pass implements the approved fresh-load introduction,
 removes persistent video Pause controls, replaces irrelevant service imagery and
 checks the resulting motion, mobile behaviour and performance. The preceding
 production fixes are archived in [the correction review](review/2026-10-23/production-correction-review.md).
@@ -86,12 +100,13 @@ the poster and completed in about three seconds; its startup still recorded
 172/59/65ms long tasks before movement. These are lab measurements, not a promise
 for every physical phone.
 
-Final production-preview Lighthouse, with the automatic intro enabled:
+Latest production-preview Lighthouse, with the automatic intro and transparent
+client row enabled:
 
 | Profile | Performance | Accessibility | Best practices | SEO | LCP | TBT | CLS |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | Desktop | 100 | 100 | 100 | 100 | 0.7s | 0ms | 0 |
-| Mobile | 99 | 100 | 100 | 100 | 2.2s | 1ms | 0 |
+| Mobile | 99 | 100 | 100 | 100 | 2.2s | 0ms | 0 |
 
 Mobile uses Lighthouse's default simulated mobile/network/CPU profile; desktop
 uses a 1350×940 viewport, 1× CPU, 40ms RTT and 10Mbps simulation. Chrome ran on
@@ -108,8 +123,8 @@ establish correct media behaviour or WCAG certification.
 - [Final clip tests and Safari findings](review/2026-10-23/production/brief-media.md)
 - [Support results](review/2026-10-23/production/intro-support.json)
 - [Normal-motion UI results](review/2026-10-23/production/intro-ui-audit.json)
-- [Desktop Lighthouse](review/2026-10-23/production/intro-lighthouse-desktop.html)
-- [Mobile Lighthouse](review/2026-10-23/production/intro-lighthouse-mobile.html)
+- [Desktop Lighthouse](review/2026-10-23/client-hero/lighthouse-desktop.html)
+- [Mobile Lighthouse](review/2026-10-23/client-hero/lighthouse-mobile.html)
 - [Throttled scroll sample](review/2026-10-23/production/intro-scroll.json)
 
 The Vercel preview is https://gforce-kappa.vercel.app/. Application commit

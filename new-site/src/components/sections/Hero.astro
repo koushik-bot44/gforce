@@ -2,6 +2,7 @@
 // A brief opening lifts the sculpture and reveals the main message on a fresh visit.
 import SplitHeading from '../ui/SplitHeading.astro';
 import Icon from '../ui/Icon.astro';
+import LogoMarquee from './LogoMarquee.astro';
 import { hero } from '../../data/site';
 ---
 <section class="hero band-dawn" data-dawn-hero data-hero-intro aria-labelledby="hero-title">
@@ -57,6 +58,7 @@ import { hero } from '../../data/site';
       <a href="/business/#cybersecurity">Cybersecurity</a>
       <a href="/business/#cloud-backup">Cloud &amp; backup</a>
     </nav>
+    <LogoMarquee compact />
   </div>
 </section>
 
@@ -129,6 +131,7 @@ import { hero } from '../../data/site';
     position: relative;
     z-index: 1;
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     justify-items: center;
     gap: 1.75rem;
     text-align: center;

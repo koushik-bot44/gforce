@@ -181,8 +181,8 @@ export const stats = {
   ],
 };
 
-// Logos already published on the current site under "Our clients". Relationship and permission to display: confirm.
-// Four brands no longer trade under these marks; they are kept in data but not displayed.
+// Original "Our clients" list, restored at the user's explicit request.
+// Reuse its earlier prepared transparent marks as requested; do not add inferred clients.
 export const clientLogos = [
   { file: '1.jpg', name: 'AIG' },
   { file: '2.gif', name: 'Amtrak' },

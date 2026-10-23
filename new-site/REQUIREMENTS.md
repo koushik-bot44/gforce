@@ -16,8 +16,11 @@ instructions govern branding, motion and removal of public sample proof.
   history restoration and reduced motion skip it. No idle loop or scroll replay.
 - Use short one-shot films, small mobile files, no Pause buttons and explicit
   Play/Retry recovery. Cloud/backup visuals depict computing, not weather.
-- Omit sample stats, testimonials, case studies and unconfirmed client logos
-  from public pages. Archive source data only. No public Example/Replay controls.
+- Omit sample stats, testimonials and case studies. The user later requested
+  restoration of the client row in the hero, then selected its earlier
+  transparent single-colour treatment with no Pause button. Reuse the supplied
+  names and prepared marks; do not add inferred companies. No public
+  Example/Replay controls.
 - Improve readable typography/English, missing learner content, overlap, lag
   and Lighthouse performance. Report current measurements with run conditions;
   do not infer a 10/10 score or a passing Lighthouse result from a build.
@@ -43,7 +46,7 @@ instructions govern branding, motion and removal of public sample proof.
 | 15 | Animated statistics strip | Omitted while values are samples; conditional layout/data remain for verified figures. |
 | 16 | Named/photo testimonials | Omitted while sample data is present. Requires real approved words, identity and photo permission. |
 | 17 | Problem → Solution → Result cases | Sample cases are archived and omitted publicly. Verified cases may use the existing conditional component later. |
-| 18 | Client-logo marquee | Unconfirmed relationships are omitted; pending logo data/component are retained. Publish only permissioned relationships. |
+| 18 | Client-logo marquee | Restored at user request: 21 earlier transparent wordmarks inside the homepage hero and on the business page. No Pause button; a smooth transform loop stops on interaction and exposes keyboard/manual scrolling. Reduced motion stays still. |
 | 19 | Certifications/partner badges | Course-preparation exam names remain. Do not imply an unverified partner/accreditation relationship. |
 | 20 | Five-question IT health check | Interactive questions, score, advice and report request; configured endpoint or clearly stated email fallback. |
 | 21 | Downtime calculator | CAD calculation from visitor inputs and an explicit formula, rather than borrowed claim statistics. |

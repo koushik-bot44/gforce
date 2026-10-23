@@ -1,6 +1,12 @@
 # G-Force visual, content and media review
 
-23 October 2026. Reviewed the rendered site, all 15 routes at 1440×900 and
+23 October 2026. Follow-up: the user requested the client row in the hero, then
+selected the earlier transparent single-colour marks and removed its Pause
+button. The 21 prepared wordmarks now fill that space without white cards;
+interaction exposes manual browsing. This supersedes the earlier client-row
+omission in the body of this review. [Current evidence](client-hero/browser-results.json).
+
+Reviewed the rendered site, all 15 routes at 1440×900 and
 390×900, individual media files and sampled film sequences. Scores are design
 judgements out of 10, based on relevance, hierarchy, composition and usability;
 they are not test results or a claim of universal perfection.
@@ -35,6 +41,7 @@ purposeful and replaces the two weakest service images.
 | Header/navigation | 9 → 9 | Original logo and crimson are recognisable; business, learning and contact routes are direct. Mobile menu remains compact. |
 | Opening sculpture | 8.3 → 9 | Complete G-FORCE fits, clear upward handoff and no repeating idle motion. Glass remains an interpretation of the reference, not a 100% material match. |
 | Hero message/actions | 8.5 → 9.2 | Toronto, the two-line proposition, both actions and service links remain readable once the introduction ends. |
+| Client-company row in hero | Missing → 9 | Earlier transparent marks restored beneath the actions; quiet ink treatment, steady motion and no separate controls. |
 | Business/learner paths | 9 → 9 | Two specific audience routes, relevant people, clear next steps and balanced desktop composition. Mobile order remains logical. |
 | Overnight/Support | 8.8 → 9 | Named steps remain immediately readable; the shared short film supports the content without permanent controls. |
 | Five services | 7.5 → 9 | Consistent editorial list; weather and empty windows replaced with computing/security subjects. Every service has a real destination. |
@@ -81,6 +88,7 @@ and [current sheet](design/media-after.jpg).
 |---|---:|---|
 | Original logo: header/footer/social artwork | 9.5 → 9.5 | Retain exact supplied artwork and proportions. It is the company identity. |
 | Glass wordmark: homepage opening | 8.3 → 9 | Retain original outlines. Entire name is visible; animated handoff now has a useful endpoint. |
+| Client-company wordmarks: hero/business | Missing → 9 | Reuses the 21 prepared transparent marks from the original list, without white cards or a Pause button. Original proportions retained; direct interaction stops motion for browsing. |
 | Photographic dawn/cloud field: hero | 8.8 → 8.8 | Retain as atmosphere, following the reference's pale blue/apricot depth. It does not describe a computing service. |
 | Photographic deep sky: inner hero bands/footer | 8.6 → 8.6 | Retain with overlays for readable type and continuity. |
 | `sky-daylight`: dawn atmosphere | 8.8 → 8.8 | Appropriate decorative weather imagery here; mobile can use the poster. Brief motion ends instead of looping. |

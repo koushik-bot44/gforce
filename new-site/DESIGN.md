@@ -21,6 +21,18 @@ retain Air's clouds, clear glass, white sheets and scroll choreography.
   professional hierarchy, varied section spacing and real licensed imagery.
   Avoid generic decorative dots, repeated ornamental kickers and dark flat blocks.
 
+## Client-company row
+
+The user requested clients inside the hero below its actions, then chose the
+earlier transparent single-colour treatment and asked to remove the Pause
+button. Reuse the existing 21 transparent wordmarks without white cards. Keep
+original proportions and quiet ink opacity. Other original marks remain in
+source. One CSS transform drives the loop, resting off-screen/when hidden.
+Hover, focus, touch or wheel interaction permanently stops automatic movement
+and exposes native horizontal browsing without a visual jump. Reduced motion
+and missing scripts retain a static, manually scrollable row. Do not add inferred
+client relationships.
+
 ## Colour and surfaces
 
 | Role | Current value | Use |
@@ -82,8 +94,8 @@ effects bounded and verify actual frames and initial load, including Lighthouse.
 
 ## Content and asset integrity
 
-Sample stats, testimonials, case studies and client logos are archived and
-omitted publicly. Publish proof only after verification and permission. Exam
+Sample stats, testimonials and case studies are archived and omitted publicly.
+The original client-company row was subsequently restored at the user's request. Publish proof only after verification and permission. Exam
 names describe course preparation. Stock imagery does not establish a team or
 customer relationship. Credits remain in the `MEDIA_LICENSES*` documents, including the current
 short-clip and security-photo sources.

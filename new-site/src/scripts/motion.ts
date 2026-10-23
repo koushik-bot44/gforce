@@ -251,19 +251,6 @@ if (menuBtn && menu) {
   matchMedia('(min-width: 1200px)').addEventListener('change', (m) => m.matches && setOpen(false));
 }
 
-/* ---------- Marquee pause (WCAG 2.2.2) ---------- */
-document.querySelectorAll<HTMLButtonElement>('[data-marquee-toggle]').forEach((btn) => {
-  const target = document.getElementById(btn.getAttribute('aria-controls') ?? '');
-  btn.removeAttribute('aria-pressed'); // the visible label carries the state
-  btn.addEventListener('click', () => {
-    const paused = !target?.classList.contains('is-paused');
-    target?.classList.toggle('is-paused', paused);
-    const label = btn.querySelector('[data-label]');
-    if (label) label.textContent = paused ? 'Play' : 'Pause';
-    btn.setAttribute('aria-label', paused ? 'Play logo animation' : 'Pause logo animation');
-  });
-});
-
 /* ---------- Toronto local time ---------- */
 const clocks = document.querySelectorAll<HTMLElement>('[data-toronto-time]');
 if (clocks.length) {

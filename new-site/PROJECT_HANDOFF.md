@@ -36,9 +36,11 @@ no-red and script-wordmark choices are superseded. Archivo carries the interface
 - Headings remain readable until their reveal observer is installed. Already
   reached, restored-scroll and focused content is shown immediately. Check the
   “Build your career in IT” section in real desktop/mobile scrolling.
-- Public sample statistics, testimonials, case studies and unconfirmed client
-  logos are omitted. Their data/components remain available for future verified
-  content. The dawn tabs describe service workflows; they do not simulate client
+- Public sample statistics, testimonials and case studies are omitted. The
+  user requested the client row in the hero beneath the actions, then selected
+  the earlier transparent single-colour marks and removed the Pause button. The
+  21 prepared marks are reused; the complete original list remains in source.
+  The business page also includes this shared row. The dawn tabs describe service workflows; they do not simulate client
   outcomes or expose Example/Replay controls.
 - Services, training filters, health check, downtime calculator, resources,
   contact paths, consent, dark mode and licensed media remain in the application.

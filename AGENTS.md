@@ -20,8 +20,12 @@ and `new-site/REQUIREMENTS.md` before substantial changes.
   scene after completion. Do not replay on scroll, anchors or history restoration.
   Reduced motion skips the intro; Save-Data/constrained/failed-WebGL visits use
   the matching animated poster. Geometry and lighting are baked offline.
-- Omit unverified stats, testimonials, case studies and client logos from public
-  pages. Sample data may remain archived in source. Do not restore public
+- The user requested the client row in the hero below its actions, then asked
+  for the earlier transparent single-colour logo treatment and no Pause button.
+  Reuse the 21 prepared transparent marks from the original company list. Direct
+  interaction stops the loop and exposes manual scrolling; reduced motion stays
+  still. Do not infer new clients.
+  Omit sample stats, testimonials and case studies. Do not restore public
   Sample/Example proof or Replay controls.
 - Preserve Archivo, professional English, usable narrow-screen layouts and
   content that remains readable if motion scripts fail. Avoid decorative dots.
