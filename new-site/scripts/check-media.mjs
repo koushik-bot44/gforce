@@ -111,7 +111,7 @@ try {
       for (let index = 2; index <= 5; index++) {
         const clip = page.locator(`#services .svc-row:nth-child(${index}) video`);
         await clip.evaluate((element) => element.scrollIntoView({ block: 'center' }));
-        await page.waitForTimeout(650);
+        await page.waitForFunction((element) => !element.paused && element.currentTime > 0.1, await clip.elementHandle(), { timeout: 8000 });
         const sample = await snapshot(page);
         assert(sample.playing <= 1, `Mobile row ${index}: multiple decoders`);
         assert(await clip.evaluate((element) => !element.paused && element.currentTime > 0.1), `Mobile row ${index}: focused film did not play`);
@@ -119,7 +119,7 @@ try {
       }
       const dawn = page.locator('[data-dawn-stage] .panel-video video');
       await dawn.evaluate((element) => element.scrollIntoView({ block: 'center' }));
-      await page.waitForTimeout(900);
+      await page.waitForFunction((element) => !element.paused && element.currentTime > 0.1, await dawn.elementHandle(), { timeout: 8000 });
       const sample = await snapshot(page);
       assert(sample.playing === 1 && await dawn.evaluate((element) => !element.paused), 'Dawn foreground must own the mobile decoder');
       assert(sample.films.filter((film) => film.ambient).every((film) => !film.src), 'Ambient mobile film downloaded');
@@ -130,7 +130,7 @@ try {
       for (let index = 2; index <= 5; index++) {
         const row = page.locator(`#services .svc-row:nth-child(${index})`);
         await row.locator('.svc-cell').hover();
-        await page.waitForTimeout(500);
+        await page.waitForFunction((element) => !element.paused && element.currentTime > 0.1, await row.locator('video').elementHandle(), { timeout: 8000 });
         const sample = await snapshot(page);
         assert(sample.playing === 1 && await row.locator('video').evaluate((element) => !element.paused), `Desktop row ${index}: inactive preview played`);
         samples.push({ at: `hover-${index}`, ...sample });

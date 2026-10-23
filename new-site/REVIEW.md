@@ -71,6 +71,24 @@ all device lag have disappeared.
 The Vercel preview intentionally returns noindex. Its live Lighthouse crawlability
 result should not be confused with production metadata validation.
 
+## Deployed preview verification
+
+The application fixes were pushed in commit 3917fce and deployed successfully to
+https://gforce-kappa.vercel.app/. The live alias targets that exact application
+commit, returns HTTP 200 and has the intended preview-only noindex header.
+Canonical and og:url still target www.gforceit.ca. The updated sharing/logo assets
+load correctly at preview paths and match the committed files.
+
+All 12 Support cases passed again on the deployed site. Live mobile Chrome and
+WebKit playback checks passed for every service film, visitor pause and offscreen
+stop. An independent WebKit run found five working films, one active at a time,
+valid HTTP 206 byte ranges and no media errors. Browser tests wait for decoded
+playback with a deadline; a fixed 650ms local-load assumption was inappropriate
+for cold CDN responses.
+
+The production client domain remains on the old Apache host and is not attached
+to this Vercel project. Domain/DNS cutover is still required before public launch.
+
 ## Repeatable checks and evidence
 
 Run `npm run build`, `npm run check:tokens` and `npm run check:seo`. With the
@@ -78,6 +96,10 @@ production preview running and Playwright configured, `npm run check:ui` runs
 Support, media and hero regressions. `GFORCE_BROWSER_ENGINE=webkit npm run
 check:media` repeats media coverage in WebKit. See [README.md](README.md) for setup.
 
+- [Live Support checks](review/2026-10-23/production/live-support.json)
+- [Live Chrome playback](review/2026-10-23/production/live-media-chromium.json)
+- [Live WebKit playback](review/2026-10-23/production/live-media-webkit.json)
+- [Live SEO/deployment check](review/2026-10-23/production/live-seo.json)
 - [Broad UI audit](review/2026-10-23/production/ui-audit.json)
 - [Hero motion and fallback evidence](review/2026-10-23/production/hero-motion.json)
 - [Media findings and browser evidence](review/2026-10-23/production-media.md)
