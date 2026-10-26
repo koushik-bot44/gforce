@@ -73,27 +73,27 @@ const logos = clientLogos.flatMap((logo) => {
   .marquee-track { width: 100%; }
   .marquee-list { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1.5rem var(--logo-gap); margin: 0; padding: 0; list-style: none; }
   .marquee-duplicate { display: none; }
-  .client-logo { display: grid; place-items: center; flex: none; height: 2.75rem; }
+  .client-logo { display: grid; place-items: center; flex: none; height: 4rem; }
   /* Original brand colours at all times (user instruction, 27 October 2026). */
   .client-logo img {
     display: block;
-    height: 2.25rem;
+    height: 3.25rem;
     width: auto;
-    max-width: 8.5rem;
+    max-width: 12.5rem;
     object-fit: contain;
   }
   /* Dark theme on the standalone band: a white chip keeps dark-lettered marks (Sprint, Microsoft, Motorola) legible. */
   :global(html[data-theme='dark']) .marquee:not(.marquee-compact) .client-logo { padding: .35rem .6rem; border-radius: 6px; background: #fff; }
   .marquee-compact { padding-block: 0; width: 100%; background: transparent; text-align: center; }
   .marquee-compact .marquee-head { width: 100%; margin-bottom: 1rem; }
-  .marquee-compact h2 { font-size: .9375rem; font-weight: 550; letter-spacing: 0; }
+  .marquee-compact h2 { font-size: 1.125rem; font-weight: 600; letter-spacing: 0; }
   .marquee-compact .marquee-viewport { padding-inline: 0; }
   @media (min-width: 768px) { .marquee { --logo-gap: 3.5rem; } }
   /* Phones: the static (reduced-motion / no-JS) list of all 28 stays compact. */
   @media (max-width: 700px) {
     .marquee-compact .marquee-list { gap: .9rem 1.25rem; }
-    .marquee-compact .client-logo { height: 2.1rem; }
-    .marquee-compact .client-logo img { height: 1.6rem; max-width: 6.5rem; }
+    .marquee-compact .client-logo { height: 2.75rem; }
+    .marquee-compact .client-logo img { height: 2.1rem; max-width: 8rem; }
   }
   @media (prefers-reduced-motion: no-preference) {
     :global(.motion-ok) .marquee-track, .marquee[data-animated] .marquee-track { display: flex; width: max-content; }
