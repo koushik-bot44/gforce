@@ -1,5 +1,7 @@
 ---
-// Restore the earlier transparent wordmarks from the supplied client list.
+// The original site's 28 client logos, in their own colours with only the white surround removed
+// (public/logos/clients/colour, cut from the original images). Shown in full colour at all times:
+// the user chose this over the PDF's grayscale-to-colour hover idea.
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { clientLogos } from '../../data/site';
@@ -7,7 +9,7 @@ interface Props { id?: string; compact?: boolean; }
 const { id = 'client-logos', compact = false } = Astro.props;
 const titleId = `${id}-title`;
 const logos = clientLogos.flatMap((logo) => {
-  const src = `/logos/clients/mono/${logo.file.replace(/\.(gif|jpg)$/i, '.png')}`;
+  const src = `/logos/clients/colour/${logo.file.replace(/\.(gif|jpg)$/i, '.png')}`;
   const path = join(process.cwd(), 'public', src);
   if (!existsSync(path)) return [];
   const png = readFileSync(path);
@@ -71,14 +73,28 @@ const logos = clientLogos.flatMap((logo) => {
   .marquee-track { width: 100%; }
   .marquee-list { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1.5rem var(--logo-gap); margin: 0; padding: 0; list-style: none; }
   .marquee-duplicate { display: none; }
-  .client-logo { display: grid; place-items: center; flex: none; height: 2rem; }
-  .client-logo img { display: block; height: 1.75rem; width: auto; max-width: none; opacity: .65; }
-  :global(html[data-theme='dark']) .marquee:not(.marquee-compact) .client-logo img { filter: invert(1); opacity: .8; }
+  .client-logo { display: grid; place-items: center; flex: none; height: 2.75rem; }
+  /* Original brand colours at all times (user instruction, 27 October 2026). */
+  .client-logo img {
+    display: block;
+    height: 2.25rem;
+    width: auto;
+    max-width: 8.5rem;
+    object-fit: contain;
+  }
+  /* Dark theme on the standalone band: a white chip keeps dark-lettered marks (Sprint, Microsoft, Motorola) legible. */
+  :global(html[data-theme='dark']) .marquee:not(.marquee-compact) .client-logo { padding: .35rem .6rem; border-radius: 6px; background: #fff; }
   .marquee-compact { padding-block: 0; width: 100%; background: transparent; text-align: center; }
   .marquee-compact .marquee-head { width: 100%; margin-bottom: 1rem; }
   .marquee-compact h2 { font-size: .9375rem; font-weight: 550; letter-spacing: 0; }
   .marquee-compact .marquee-viewport { padding-inline: 0; }
   @media (min-width: 768px) { .marquee { --logo-gap: 3.5rem; } }
+  /* Phones: the static (reduced-motion / no-JS) list of all 28 stays compact. */
+  @media (max-width: 700px) {
+    .marquee-compact .marquee-list { gap: .9rem 1.25rem; }
+    .marquee-compact .client-logo { height: 2.1rem; }
+    .marquee-compact .client-logo img { height: 1.6rem; max-width: 6.5rem; }
+  }
   @media (prefers-reduced-motion: no-preference) {
     :global(.motion-ok) .marquee-track, .marquee[data-animated] .marquee-track { display: flex; width: max-content; }
     :global(.motion-ok) .marquee-list, .marquee[data-animated] .marquee-list { flex: none; flex-wrap: nowrap; justify-content: flex-start; padding-right: var(--logo-gap); }
