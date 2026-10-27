@@ -1,9 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "installCommand": "cd new-site && npm ci",
-  "buildCommand": "cd new-site && PUBLIC_SKIN=white-red npm run build",
-  "outputDirectory": "new-site/dist",
+  "installCommand": "if [ -d new-site ]; then cd new-site; fi; npm ci",
+  "buildCommand": "if [ -d new-site ]; then cd new-site && PUBLIC_SKIN=white-red npm run build && rm -rf ../dist && cp -R dist ../dist; else PUBLIC_SKIN=white-red npm run build; fi",
+  "outputDirectory": "dist",
   "trailingSlash": true,
   "redirects": [
     { "source": "/services.html", "destination": "/business/", "permanent": true },
