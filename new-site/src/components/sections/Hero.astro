@@ -4,9 +4,13 @@ import SplitHeading from '../ui/SplitHeading.astro';
 import Icon from '../ui/Icon.astro';
 import LogoMarquee from './LogoMarquee.astro';
 import { hero } from '../../data/site';
+// The white & crimson skin has no 3D opening (user request): the hero renders in its settled state, the same one
+// reduced-motion and Back/Forward visits get, and no glass, poster or WebGL is loaded. It is the original site's
+// crimson hero instead (skin-white-red.css), so it is a night band.
+const glass = import.meta.env.PUBLIC_SKIN !== 'white-red';
 ---
-<section class="hero band-dawn" data-dawn-hero data-hero-intro aria-labelledby="hero-title">
-  <script is:inline>
+<section class:list={['hero', glass ? 'band-dawn' : 'band-night', { 'intro-complete': !glass }]} data-dawn-hero={glass ? '' : undefined} data-night-hero={glass ? undefined : ''} data-hero-intro data-intro-state={glass ? undefined : 'complete'} aria-labelledby="hero-title">
+  {glass && <script is:inline>
     (() => {
       const hero = document.currentScript.closest('section');
       const navigation = performance.getEntriesByType('navigation')[0];
@@ -28,9 +32,9 @@ import { hero } from '../../data/site';
         hero.dataset.introState = 'complete';
       }
     })();
-  </script>
+  </script>}
   <div class="hero-clouds" aria-hidden="true"></div>
-  <div class="hero-art">
+  {glass && <div class="hero-art">
     <picture class="hero-poster">
       <source media="(max-width: 700px)" type="image/avif" srcset="/3d/hero-poster-original-mobile.avif" />
       <source media="(max-width: 700px)" type="image/webp" srcset="/3d/hero-poster-original-mobile.webp" />
@@ -38,9 +42,9 @@ import { hero } from '../../data/site';
       <img src="/3d/hero-poster-original-1600.webp" srcset="/3d/hero-poster-original-1280.webp 1280w, /3d/hero-poster-original-1600.webp 1600w, /3d/hero-poster-original-2560.webp 2560w" sizes="94vw" alt="G-Force IT Services Inc. sculpted in clear glass" width="1600" height="364" fetchpriority="high" decoding="async" />
     </picture>
     <canvas class="hero-glass" data-glass-name aria-hidden="true"></canvas>
-  </div>
-  <div class="hero-spacer" aria-hidden="true"></div>
-  <button class="hero-scroll" type="button" data-skip-intro><span>Skip introduction</span><Icon name="arrow" size={18} /></button>
+  </div>}
+  {glass && <div class="hero-spacer" aria-hidden="true"></div>}
+  {glass && <button class="hero-scroll" type="button" data-skip-intro><span>Skip introduction</span><Icon name="arrow" size={18} /></button>}
 
   <div class="container-g hero-inner">
     <div class="hero-copy">
@@ -183,6 +187,9 @@ import { hero } from '../../data/site';
   }
   .hero-scroll :global(svg) { transform: rotate(90deg); }
   @media (max-width: 700px) {
+    /* Let the next section follow the content, even on tall phone screens. */
+    .hero { min-height: 0; }
+    .hero-inner { padding-bottom: 3rem; }
     .hero-art { height: 19rem; }
     .hero-copy :global(.hero-title) { font-size: clamp(1.8rem, 1rem + 3.8vw, 2.5rem); }
     .hero-sub { display: none; }

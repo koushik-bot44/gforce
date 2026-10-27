@@ -21,11 +21,7 @@ const last = process.length - 1;
       <div class="process-sticky">
         <SplitHeading id="process-title" as="h2" lines={['How we *work*']} class="t-h2 process-title" />
         <p class="t-lead process-lead" data-reveal style="--reveal-delay: 120ms">
-          First, a written risk report and a costed roadmap. You decide what gets fixed and when, then we do the work and keep watching.
-        </p>
-        <p class="process-note t-meta" data-reveal style="--reveal-delay: 200ms">
-          <Icon name="clock" size={18} />
-          <span>Timings show a typical first six weeks. Your roadmap sets the real dates.</span>
+          The right level of support to match your business needs, from the first assessment to everyday technical support.
         </p>
         <a class="link-arrow process-cta" href={hero.primary.href} data-reveal style="--reveal-delay: 260ms">
           {hero.primary.label}
@@ -43,11 +39,7 @@ const last = process.length - 1;
             <span class="step-num step-num-lit">{marker(i)}</span>
           </span>
           <div class="step-body" data-reveal>
-            <div class="step-head">
-              <h3 class="t-h3 step-title">{s.step}</h3>
-              <span class="step-leader" aria-hidden="true"></span>
-              <p class="step-when t-meta t-num">{s.when}</p>
-            </div>
+            <h3 class="t-h3 step-title">{s.step}</h3>
             <p class="step-text">{s.body}</p>
           </div>
         </li>
@@ -77,18 +69,6 @@ const last = process.length - 1;
     max-width: 38ch;
     margin-top: 1.25rem;
     color: var(--text-muted);
-  }
-  .process-note {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.55rem;
-    max-width: 40ch;
-    margin-top: 1.5rem;
-    color: var(--text-muted);
-  }
-  .process-note :global(svg) {
-    flex: none;
-    margin-top: 0.05rem;
   }
   .process-cta {
     min-height: 2.75rem;
@@ -176,41 +156,13 @@ const last = process.length - 1;
   .step-body {
     min-width: 0;
   }
-  .step-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.25rem 1rem;
-  }
   .step-title {
     margin: calc((var(--marker) - 1.15em) / 2) 0 0;
-  }
-  .step-leader {
-    display: none;
-  }
-  .step-when {
-    margin: 0;
-    color: var(--text-muted);
-    white-space: nowrap;
   }
   .step-text {
     max-width: 46ch;
     margin-top: 0.6rem;
     color: var(--text-muted);
-  }
-
-  @media (min-width: 640px) {
-    .step-head {
-      flex-wrap: nowrap;
-    }
-    /* A timetable leader joins each step to its timing. */
-    .step-leader {
-      display: block;
-      flex: 1 1 auto;
-      min-width: 1.5rem;
-      border-bottom: 1px solid var(--line-strong);
-      transform: translateY(-0.3em);
-    }
   }
 
   @media (min-width: 1024px) {

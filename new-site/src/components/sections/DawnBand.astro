@@ -18,6 +18,9 @@ const ticket = [
   { text: 'Troubleshoot and agree on the next action' },
   { text: 'Confirm the outcome and document the work', final: true },
 ];
+// White & crimson skin: the Services preview two screens later opens on the managed-IT clip, so this panel shows
+// the backup clip (the care routine above verifies backups).
+const panelClip = import.meta.env.PUBLIC_SKIN === 'white-red' ? 'svc-cloud-backup' : 'svc-managed-it';
 ---
 <section class="dawn band-dawn" id="morning" aria-labelledby="dawn-title" data-dawn-stage data-video-group data-scroll-progress="through" data-rest-p="1">
   <div class="dawn-atmosphere" aria-hidden="true">
@@ -40,7 +43,7 @@ const ticket = [
   <div class="container-g">
     <div class="panel" data-tabs data-scroll-progress="enter" data-rest-p="1">
       <div class="panel-media" data-hover-scope>
-        <Video slot="svc-managed-it" mode="inview" class="panel-video" label="IT systems maintenance video" />
+        <Video slot={panelClip} mode="inview" class="panel-video" label="IT systems maintenance video" />
         <p class="panel-caption t-meta">Your systems, looked after by people who know them.</p>
       </div>
 

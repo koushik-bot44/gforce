@@ -7,8 +7,10 @@ interface Props {
   nightHero?: boolean;
   /** The persistent header call to action. Pages for one audience pass their own (for example /training). */
   cta?: { label: string; href: string };
+  /** False for light-only skins (the white & crimson build). */
+  themeToggle?: boolean;
 }
-const { nightHero = false, cta = { label: 'Book an assessment', href: '/contact/?interest=assessment#contact-form' } } = Astro.props;
+const { nightHero = false, themeToggle = true, cta = { label: 'Book an assessment', href: '/contact/?interest=assessment#contact-form' } } = Astro.props;
 // Compare without trailing slashes: nav hrefs end in "/" (trailingSlash: always), so a raw comparison never matched.
 const trim = (p: string) => p.replace(/\/+$/, '') || '/';
 const path = trim(Astro.url.pathname);
@@ -42,10 +44,12 @@ const isActive = (href: string) => {
       <a class="icon-btn header-call" href={company.phoneHref} aria-label={`Call ${company.phoneDisplay}`}>
         <Icon name="phone" size={20} />
       </a>
-      <button type="button" class="icon-btn header-theme" data-theme-toggle aria-label="Switch to dark theme">
-        <span class="theme-icon theme-icon-moon"><Icon name="moon" size={20} /></span>
-        <span class="theme-icon theme-icon-sun"><Icon name="sun" size={20} /></span>
-      </button>
+      {themeToggle && (
+        <button type="button" class="icon-btn header-theme" data-theme-toggle aria-label="Switch to dark theme">
+          <span class="theme-icon theme-icon-moon"><Icon name="moon" size={20} /></span>
+          <span class="theme-icon theme-icon-sun"><Icon name="sun" size={20} /></span>
+        </button>
+      )}
       <a class="btn btn-primary header-cta" href={cta.href}>{cta.label}</a>
       <button type="button" class="icon-btn menu-btn" data-menu-toggle aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
         <span class="menu-icon-open"><Icon name="menu" size={22} /></span>
@@ -75,11 +79,13 @@ const isActive = (href: string) => {
       <p class="t-meta mobile-hours">
         <span class="nowrap">{company.hours.days},</span> <span class="nowrap">{company.hours.local}</span> <span class="nowrap">({company.hours.eastern})</span>
       </p>
-      <button type="button" class="btn btn-secondary mobile-theme" data-theme-toggle aria-label="Switch to dark theme">
-        <span class="theme-icon theme-icon-moon"><Icon name="moon" size={18} /></span>
-        <span class="theme-icon theme-icon-sun"><Icon name="sun" size={18} /></span>
-        Theme
-      </button>
+      {themeToggle && (
+        <button type="button" class="btn btn-secondary mobile-theme" data-theme-toggle aria-label="Switch to dark theme">
+          <span class="theme-icon theme-icon-moon"><Icon name="moon" size={18} /></span>
+          <span class="theme-icon theme-icon-sun"><Icon name="sun" size={18} /></span>
+          Theme
+        </button>
+      )}
     </div>
   </nav>
 </div>

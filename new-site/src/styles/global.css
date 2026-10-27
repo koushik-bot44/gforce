@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "@fontsource-variable/archivo/wght.css";
+/* Optional build-time skin (PUBLIC_SKIN=white-red). Every rule in it is scoped to html[data-skin="white-red"]. */
+@import "./skin-white-red.css";
 
 /* Width axis for the compressed .t-mega display only; downloaded only on pages that use it. */
 @font-face {

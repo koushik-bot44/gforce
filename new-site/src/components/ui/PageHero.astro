@@ -6,6 +6,7 @@
 import SplitHeading from './SplitHeading.astro';
 import Video from './Video.astro';
 import Picture from './Picture.astro';
+import { nav } from '../../data/site';
 
 interface Props {
   lines: string[];
@@ -17,17 +18,23 @@ interface Props {
   crumb?: { label: string; href: string; current?: string };
   compact?: boolean;
 }
-const { lines, intro, tone = 'night', media: slot, mediaKind = 'video', crumb, compact = false } = Astro.props;
-const band = tone === 'night' ? 'band-night' : tone === 'dawn' ? 'band-dawn' : 'band-light';
+const { lines, intro, tone = 'night', media: slot, mediaKind = 'video', crumb: crumbProp, compact = false } = Astro.props;
+// White & crimson skin: inner heroes are the original gforceit.ca title banner, the crimson gradient with white
+// type, for night and dawn tones alike. The tone class is kept so page-specific layout rules still apply.
+const red = import.meta.env.PUBLIC_SKIN === 'white-red' && tone !== 'light' && !slot;
+const band = red || tone === 'night' ? 'band-night' : tone === 'dawn' ? 'band-dawn' : 'band-light';
+// Like the original's "Homepage / Services" banner, a red hero names its section in a breadcrumb.
+const section = red ? nav.find((item) => Astro.url.pathname.startsWith(item.href)) : undefined;
+const crumb = crumbProp ?? (section && { label: 'Home', href: '/', current: section.label });
 const hasAside = Astro.slots.has('aside');
 ---
 <section
-  class:list={['page-hero', band, `page-hero-${tone}`, { 'has-media': !!slot, 'page-hero-compact': compact }]}
-  data-night-hero={tone === 'night' ? '' : undefined}
-  data-dawn-hero={tone === 'dawn' ? '' : undefined}
+  class:list={['page-hero', band, `page-hero-${tone}`, { 'has-media': !!slot, 'page-hero-compact': compact, 'page-hero-red': red }]}
+  data-night-hero={tone === 'night' || red ? '' : undefined}
+  data-dawn-hero={tone === 'dawn' && !red ? '' : undefined}
   aria-labelledby="page-title"
 >
-  {tone === 'night' && !slot && (
+  {tone === 'night' && !slot && !red && (
     <div class="page-hero-sky" aria-hidden="true">
       <img src="/3d/sky-1280.jpg" srcset="/3d/sky-1280.jpg 1280w, /3d/sky-2560.jpg 2560w" sizes="100vw" alt="" width="1280" height="720" fetchpriority="high" decoding="async" />
     </div>

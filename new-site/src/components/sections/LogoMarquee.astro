@@ -13,7 +13,11 @@ const logos = clientLogos.flatMap((logo) => {
   const path = join(process.cwd(), 'public', src);
   if (!existsSync(path)) return [];
   const png = readFileSync(path);
-  return [{ ...logo, src, width: png.readUInt32BE(16), height: png.readUInt32BE(20) }];
+  const width = png.readUInt32BE(16), height = png.readUInt32BE(20);
+  // Optical size: equal visual area instead of equal height, so wide wordmarks (Caterpillar, Microsoft) do not
+  // dominate compact marks (WB, Mastercard). k scales the row's base height; 2.6:1 is the typical logo.
+  const k = Math.min(1.4, Math.max(0.62, Math.sqrt(2.6 / (width / height))));
+  return [{ ...logo, src, width, height, k: k.toFixed(3) }];
 });
 ---
 <section class:list={['marquee', { 'marquee-compact': compact }]} data-marquee aria-labelledby={titleId} style={`--marquee-duration: ${logos.length * 4}s`}>
@@ -24,10 +28,10 @@ const logos = clientLogos.flatMap((logo) => {
   <div class="marquee-viewport">
     <div class="marquee-track">
       <ul class="marquee-list" role="list" aria-labelledby={titleId}>
-        {logos.map((logo) => <li class="client-logo"><img src={logo.src} alt={logo.name} width={logo.width} height={logo.height} loading="lazy" decoding="async" fetchpriority="low" draggable="false" /></li>)}
+        {logos.map((logo) => <li class="client-logo" style={`--k: ${logo.k}`}><img src={logo.src} alt={logo.name} width={logo.width} height={logo.height} loading="lazy" decoding="async" fetchpriority="low" draggable="false" /></li>)}
       </ul>
       <ul class="marquee-list marquee-duplicate" aria-hidden="true" inert>
-        {logos.map((logo) => <li class="client-logo"><img src={logo.src} alt="" width={logo.width} height={logo.height} loading="lazy" decoding="async" fetchpriority="low" draggable="false" /></li>)}
+        {logos.map((logo) => <li class="client-logo" style={`--k: ${logo.k}`}><img src={logo.src} alt="" width={logo.width} height={logo.height} loading="lazy" decoding="async" fetchpriority="low" draggable="false" /></li>)}
       </ul>
     </div>
   </div>
@@ -73,17 +77,20 @@ const logos = clientLogos.flatMap((logo) => {
   .marquee-track { width: 100%; }
   .marquee-list { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1.5rem var(--logo-gap); margin: 0; padding: 0; list-style: none; }
   .marquee-duplicate { display: none; }
-  .client-logo { display: grid; place-items: center; flex: none; height: 4rem; }
+  .marquee { --logo-h: 2.75rem; }
+  .client-logo { display: grid; place-items: center; flex: none; height: calc(var(--logo-h) * 1.45); }
   /* Original brand colours at all times (user instruction, 27 October 2026). */
   .client-logo img {
     display: block;
-    height: 3.25rem;
+    height: calc(var(--logo-h) * var(--k, 1));
     width: auto;
-    max-width: 12.5rem;
+    max-width: 11rem;
     object-fit: contain;
   }
-  /* Dark theme on the standalone band: a white chip keeps dark-lettered marks (Sprint, Microsoft, Motorola) legible. */
-  :global(html[data-theme='dark']) .marquee:not(.marquee-compact) .client-logo { padding: .35rem .6rem; border-radius: 6px; background: #fff; }
+  /* Dark theme on the standalone band (the white & crimson skin uses one light ribbon instead): a white chip keeps dark-lettered marks (Sprint, Microsoft, Motorola) legible. */
+  :global(html[data-theme='dark']:not([data-skin='white-red'])) .marquee:not(.marquee-compact) .client-logo { padding: .35rem .6rem; border-radius: 6px; background: #fff; }
+  /* The static list (reduced motion, no JavaScript) wraps inside the content column, not the gutters. */
+  :global(html:not(.motion-ok)) .marquee:not(.marquee-compact):not([data-animated]) .marquee-viewport { width: min(100% - 2 * var(--gutter), 1240px); margin-inline: auto; padding-inline: 0; }
   .marquee-compact { padding-block: 0; width: 100%; background: transparent; text-align: center; }
   .marquee-compact .marquee-head { width: 100%; margin-bottom: 1rem; }
   .marquee-compact h2 { font-size: 1.125rem; font-weight: 600; letter-spacing: 0; }
@@ -92,8 +99,8 @@ const logos = clientLogos.flatMap((logo) => {
   /* Phones: the static (reduced-motion / no-JS) list of all 28 stays compact. */
   @media (max-width: 700px) {
     .marquee-compact .marquee-list { gap: .9rem 1.25rem; }
-    .marquee-compact .client-logo { height: 2.75rem; }
-    .marquee-compact .client-logo img { height: 2.1rem; max-width: 8rem; }
+    .marquee-compact { --logo-h: 1.85rem; }
+    .marquee-compact .client-logo img { max-width: 7.5rem; }
   }
   @media (prefers-reduced-motion: no-preference) {
     :global(.motion-ok) .marquee-track, .marquee[data-animated] .marquee-track { display: flex; width: max-content; }

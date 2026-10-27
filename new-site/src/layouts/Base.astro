@@ -35,6 +35,9 @@ const {
   noindex = false,
   type = 'website',
 } = Astro.props;
+// Visual skin, chosen at build time: 'air' (sky blue and dawn, the default) or 'white-red' (white surfaces,
+// crimson accents and bands). Both share every component; skin-white-red.css remaps the tokens.
+const skin = import.meta.env.PUBLIC_SKIN === 'white-red' ? 'white-red' : 'air';
 const canonical = new URL(Astro.url.pathname, Astro.site ?? company.url).href;
 const ogImage = new URL(image, Astro.site ?? company.url).href;
 const fullTitle = title.includes('G-Force') ? title : `${title} | G-Force IT Services`;
@@ -74,7 +77,7 @@ const websiteLd = {
 };
 ---
 <!doctype html>
-<html lang="en-CA">
+<html lang="en-CA" data-skin={skin}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -82,7 +85,7 @@ const websiteLd = {
     <meta name="description" content={description} />
     {!noindex && <link rel="canonical" href={canonical} />}
     {noindex && <meta name="robots" content="noindex" />}
-    <meta name="theme-color" content="#123E73" /><!-- token-exempt: meta tags cannot read CSS variables (= --color-sky-deep) -->
+    <meta name="theme-color" content={skin === 'white-red' ? '#FFFFFF' : '#123E73'} /><!-- token-exempt: meta tags cannot read CSS variables (= page top / --color-sky-deep) -->
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content="G-Force IT Services" />
     <meta property="og:locale" content="en_CA" />
@@ -143,7 +146,8 @@ const websiteLd = {
         }
         let t = null;
         try { t = localStorage.getItem('gf-theme'); } catch (e) {}
-        d.dataset.theme = t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+        // The white & crimson skin is light only (red and white, user request).
+        d.dataset.theme = d.dataset.skin !== 'white-red' && (t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches)) ? 'dark' : 'light';
         if (matchMedia('(prefers-reduced-motion: no-preference)').matches && 'IntersectionObserver' in window) {
           d.classList.add('motion-ok');
         }
@@ -153,10 +157,10 @@ const websiteLd = {
     {Astro.url.pathname === '/' && <script type="application/ld+json" set:html={JSON.stringify(websiteLd)} />}
     <slot name="head" />
   </head>
-  <body class:list={[{ 'has-night-hero': nightHero, 'has-air-sky': sky, 'has-glass-hero': glassHero }]}>
+  <body class:list={[{ 'has-night-hero': nightHero && skin !== 'white-red', 'has-air-sky': sky, 'has-glass-hero': glassHero }]}>
     {sky && <div class="air-sky" aria-hidden="true"></div>}
     <a href="#main" class="skip-link">Skip to content</a>
-    <Header nightHero={nightHero} cta={headerCta} />
+    <Header nightHero={nightHero} themeToggle={skin !== 'white-red'} cta={headerCta} />
     <main id="main" tabindex="-1">
       <slot />
     </main>

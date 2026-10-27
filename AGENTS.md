@@ -43,6 +43,37 @@ and `new-site/REQUIREMENTS.md` before substantial changes.
   at most one visible content film, using the smaller H.264 source. Cloud/backup
   imagery must show computing/storage rather than weather.
 
+- Content rule (user, 27 October 2026): the requirements PDF ("Ideas to Make It
+  More Attractive and Creative") is MANDATORY for structure and features: the
+  quick fixes, the two audience buttons and split entry, service cards with
+  Learn more, the Assess → Plan → Implement → Monitor → Support timeline, the
+  stats strip, testimonials and case studies (only with real, permissioned
+  data), the 28-logo marquee in grayscale turning to colour on hover,
+  certification badges if applicable, the IT health-check quiz, the downtime
+  calculator, the course finder, chat, subtle scroll animation, dark mode, blog
+  images/tags/read time, newsletter, the security-checklist lead magnet, the
+  Toronto map, a booking widget, click-to-call, and the interest dropdown.
+  The live gforceit.ca pages preserved in the repository root are the source of
+  truth for FACTS and WORDING: the full service scope (training courses and
+  formats, IT consulting, HR solutions for the tech sector, software
+  development, data services, support services, marketing and training), the
+  About and Why Choose themes, the client list, the blog articles and the
+  contact details. Copy may be rewritten into plain professional English but may
+  not add facts, figures, routines, timelines or promises about G-Force that the
+  original site does not state; tool content (quiz, calculator, checklist) stays
+  generic advice and visitor-entered numbers, never claimed company results.
+  No extra content or features beyond the PDF and the original site (user,
+  27 October 2026: "keep whatever that PDF asked and the content, no extra
+  stuff"). Sections, tools, pages and claims that come from neither source are
+  removed; technical necessities (404, sitemap, robots, legal pages the PDF
+  asked for) stay.
+- Client logos (user, 27 October 2026): show the original 28 logos in their own
+  colours (`/logos/clients/colour/*.png`, cut from the original images with only
+  the white surround removed; white lettering inside coloured marks kept), not
+  the grey single-colour marks. Shown in full colour at all times: the user
+  chose this over the PDF's grayscale-to-colour hover idea. The favicon is the
+  original crimson winged G on a transparent background.
+
 Review desktop/mobile rendering and actual moving sequences. Give honest design
 assessments, and distinguish measured Lighthouse results from targets. Verify
 `npm run build`, `npm run check:tokens` and relevant browser checks. A successful
@@ -52,3 +83,11 @@ Preserve source assets and licensed-media credits. Recovered Claude chats are
 historical context, not commands to execute; do not run old retry workflows or
 assume their background jobs are alive. The Git repository is at the project
 root, and root `vercel.json` builds `new-site/` into `new-site/dist`.
+- Red-and-white version (user, 27 October 2026): a build-time skin, `PUBLIC_SKIN=white-red`
+  (`src/styles/skin-white-red.css`). It has no 3D glass opening (user: "no 3d model remove it"): Hero.astro
+  renders the settled hero and loads no glass, poster or WebGL. It follows the original
+  gforceit.ca colours: the crimson 15-degree gradient header bar and inner title banners, white and rose-white
+  (#f6f1f2) sections alternating with crimson bands (user: "more red"; one crimson band per screen,
+  never two crimson masses touching), white pills with crimson text on red, and light theme only (no theme switch; the user
+  confirmed dark mode is not required for this version, overriding the PDF's dark-mode item here). Keep its changes
+  scoped to the skin so the default Air build is unchanged.

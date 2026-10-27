@@ -30,7 +30,9 @@ for (const file of walk(SRC)) {
   lines.forEach((ln, i) => {
     const n = i + 1;
     const isComment = /^\s*(\/\/|\/\*|\*)/.test(ln) || /token-exempt/.test(ln);
-    if (file !== TOKEN_FILE && !isComment) {
+    // Token files: global.css and the skin token files beside it (src/styles/skin-*.css).
+    const isTokenFile = file === TOKEN_FILE || /[\\/]styles[\\/]skin-[\w-]+\.css$/.test(file);
+    if (!isTokenFile && !isComment) {
       for (const m of ln.matchAll(HEX)) {
         // allow hex inside URLs/ids and the white used for text on crimson buttons
         if (/#fff\b|#ffffff\b/i.test(m[0])) continue;

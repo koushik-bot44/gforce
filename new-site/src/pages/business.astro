@@ -27,6 +27,8 @@ const consulting = service('consulting');
 const responseTargets = faqs.find((f) => f.q.startsWith('How quickly'))?.a;
 const staffTraining = faqs.find((f) => f.q.startsWith('Can you train'))?.a.replace(/^Yes\.\s*/, '');
 
+// White & crimson skin: the in-page links are the original Services page's pill row on white, under the banner.
+const pillIndex = import.meta.env.PUBLIC_SKIN === 'white-red';
 const jump = [
   { href: '#managed-it', label: managed.name },
   { href: '#cybersecurity', label: security.name },
@@ -78,15 +80,29 @@ const servicesLd = {
         Call {company.phoneDisplay}
       </a>
     </div>
-    <nav class="biz-jump" aria-labelledby="biz-jump-label" data-reveal="load" style="--reveal-delay: 680ms">
-      <p id="biz-jump-label" class="biz-jump-label t-meta">On this page:</p>
-      <ul role="list">
-        {jump.map((j) => (
-          <li><a href={j.href}>{j.label}</a></li>
-        ))}
-      </ul>
-    </nav>
+    {!pillIndex && (
+      <nav class="biz-jump" aria-labelledby="biz-jump-label" data-reveal="load" style="--reveal-delay: 680ms">
+        <p id="biz-jump-label" class="biz-jump-label t-meta">On this page:</p>
+        <ul role="list">
+          {jump.map((j) => (
+            <li><a href={j.href}>{j.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+    )}
   </PageHero>
+  {pillIndex && (
+    <nav class="page-index" aria-labelledby="page-index-label">
+      <div class="container-g">
+        <p id="page-index-label" class="page-index-label t-meta">On this page</p>
+        <ul role="list">
+          {jump.map((j) => (
+            <li><a href={j.href}>{j.label}</a></li>
+          ))}
+        </ul>
+      </div>
+    </nav>
+  )}
 
   {/* Managed IT: the words first, so "Learn more" lands on the heading, then the wide film settling in under them. */}
   <section id="managed-it" class="svc sheet" aria-labelledby="managed-it-title">

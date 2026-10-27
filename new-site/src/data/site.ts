@@ -162,12 +162,14 @@ export const services: Service[] = [
 ];
 
 // A real sequence, so numbered markers are earned here (DESIGN.md). Timings are the proposed standard. confirm
+// The PDF's Assess → Plan → Implement → Monitor → Support timeline, worded from the original site (index.html,
+// services.html). No timings or deliverables: the original states none.
 export const process = [
-  { step: 'Assess', when: 'Week 1', body: 'We review your systems, devices and accounts, then document the risks and recommended improvements.' },
-  { step: 'Plan', when: 'Week 2', body: 'You receive a prioritised roadmap with estimated costs to guide your decisions.' },
-  { step: 'Implement', when: 'Weeks 3 to 6', body: 'We introduce security controls, backups and agreed improvements around your business operations.' },
-  { step: 'Monitor', when: 'Ongoing', body: 'Regular monitoring, updates and maintenance help identify and address issues early.' },
-  { step: 'Support', when: 'Ongoing', body: 'Your team has a contact who understands your systems, with response targets defined in your agreement.' },
+  { step: 'Assess', body: 'A thorough assessment of your systems and security, so you stay ahead of potential risks.' },
+  { step: 'Plan', body: 'Tailored solutions designed to meet your current needs and future goals.' },
+  { step: 'Implement', body: 'Network support and security strategies put in place across your on-premises and cloud environments.' },
+  { step: 'Monitor', body: 'With our dedicated oversight, you can focus on your core operations while your technology runs smoothly.' },
+  { step: 'Support', body: 'Reliable technical support that resolves issues quickly, keeping downtime to a minimum.' },
 ];
 
 // Sample figures for layout. Replace with real, dated numbers (see PRODUCT.md).
