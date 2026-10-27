@@ -6,7 +6,9 @@ import LogoMarquee from './LogoMarquee.astro';
 import { hero } from '../../data/site';
 // The white & crimson skin has no 3D opening (user request): the hero renders in its settled state, the same one
 // reduced-motion and Back/Forward visits get, and no glass, poster or WebGL is loaded. It is the original site's
-// crimson hero instead (skin-white-red.css), so it is a night band.
+// crimson hero instead (skin-white-red.css), so it is a night band, with Toronto at night as a crimson duotone. The
+// skyline crops (hero-city*, hero-city-wide*) are cut from the full-resolution Unsplash original of img-toronto-night
+// (Frank Huang, Unsplash License) with a greyscale tone curve baked in: the sky is black, the lit city is light.
 const glass = import.meta.env.PUBLIC_SKIN !== 'white-red';
 ---
 <section class:list={['hero', glass ? 'band-dawn' : 'band-night', { 'intro-complete': !glass }]} data-dawn-hero={glass ? '' : undefined} data-night-hero={glass ? undefined : ''} data-hero-intro data-intro-state={glass ? undefined : 'complete'} aria-labelledby="hero-title">
@@ -62,6 +64,16 @@ const glass = import.meta.env.PUBLIC_SKIN !== 'white-red';
       <a href="/business/#cybersecurity">Cybersecurity</a>
       <a href="/business/#cloud-backup">Cloud &amp; backup</a>
     </nav>
+    {!glass && (
+      <picture class="hero-city">
+        <source media="(min-width: 1024px)" type="image/avif" srcset="/media/img/hero-city-800.avif 800w, /media/img/hero-city-1400.avif 1400w, /media/img/hero-city-2000.avif 2000w" sizes="50vw" />
+        <source media="(min-width: 1024px)" type="image/webp" srcset="/media/img/hero-city-800.webp 800w, /media/img/hero-city-1400.webp 1400w, /media/img/hero-city-2000.webp 2000w" sizes="50vw" />
+        <source media="(min-width: 1024px)" srcset="/media/img/hero-city-800.jpg 800w, /media/img/hero-city-1400.jpg 1400w, /media/img/hero-city-2000.jpg 2000w" sizes="50vw" />
+        <source type="image/avif" srcset="/media/img/hero-city-wide-800.avif 800w, /media/img/hero-city-wide-1200.avif 1200w" sizes="100vw" />
+        <source type="image/webp" srcset="/media/img/hero-city-wide-800.webp 800w, /media/img/hero-city-wide-1200.webp 1200w" sizes="100vw" />
+        <img class="hero-city-img" src="/media/img/hero-city-wide-1200.jpg" srcset="/media/img/hero-city-wide-800.jpg 800w, /media/img/hero-city-wide-1200.jpg 1200w" sizes="100vw" alt="" width="1200" height="500" loading="eager" fetchpriority="high" decoding="async" />
+      </picture>
+    )}
     <LogoMarquee compact />
   </div>
 </section>

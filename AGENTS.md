@@ -87,7 +87,8 @@ root, and root `vercel.json` builds `new-site/` into `new-site/dist`.
   (`src/styles/skin-white-red.css`). It has no 3D glass opening (user: "no 3d model remove it"): Hero.astro
   renders the settled hero and loads no glass, poster or WebGL. It follows the original
   gforceit.ca colours: the crimson 15-degree gradient header bar and inner title banners, white and rose-white
-  (#f6f1f2) sections alternating with crimson bands (user: "more red"; one crimson band per screen,
-  never two crimson masses touching), white pills with crimson text on red, and light theme only (no theme switch; the user
+  (#f6f1f2) sections; the home page alternates with extra crimson bands (user: "more red", home page only;
+  inner pages keep banner + white/rose sections; never two crimson masses touching), white pills with crimson text on red, and light theme only (no theme switch; the user
   confirmed dark mode is not required for this version, overriding the PDF's dark-mode item here). Keep its changes
-  scoped to the skin so the default Air build is unchanged.
+  scoped to the skin so the default Air build is unchanged. When the user asks to change a page or section, change
+  only that page or section (user, 28 October 2026: "just change only the home page not entire site").

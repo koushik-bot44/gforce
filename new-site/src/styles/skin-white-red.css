@@ -287,13 +287,14 @@
   line-height: 1.02;
 }
 
-/* ---------- Home hero: editorial, left-aligned ---------- */
-/* No 3D opening in this skin (Hero.astro renders the settled hero). It is the original site's first impression: a
-   crimson hero with a photograph under the gradient, white type and a white pill. The unused licensed office photo
-   (img-office-team, Unsplash) is lifted to 80% white and multiplied under the gradient, so it adds depth and can only
-   darken the crimson; white type keeps its contrast. Layout: a white rule, the location, a large left-aligned
-   headline and (from 1024px) the intro, actions and service links in a right-hand column. The client logos close it
-   on a full-width white strip (their own colours need white), and the hero is only as tall as its content.
+/* ---------- Home hero: Toronto at night, in crimson ---------- */
+/* No 3D opening in this skin (Hero.astro renders the settled hero). The original site's first impression is a crimson
+   hero over a photograph; here the photograph is the company's city. The licensed Toronto skyline (img-toronto-night,
+   Unsplash, otherwise unused) is greyscaled and screened onto the 15deg gradient, so the dark sky and water take the
+   brand crimson and the city lights glow white. Desktop: the copy on the left on clean gradient, the skyline filling
+   the right and bleeding to the edge. Phones: the skyline is a band under the actions. The client logos close the hero
+   on a full-width white strip (their own colours need white). On load the copy rises in sequence while the city lights
+   come up; reduced motion shows the final state.
    body + .band-night outranks Hero.astro's forced light tokens (html[data-theme] .hero, 0,3,1 with its scope). */
 :root[data-skin='white-red'] body .hero.band-night {
   color-scheme: dark;
@@ -310,21 +311,19 @@
   min-height: 0;
   color: var(--text);
   background-color: var(--color-crimson-500);
-  background-image:
-    var(--sky-gradient),
-    linear-gradient(rgb(255 255 255 / 0.8), rgb(255 255 255 / 0.8)),
-    image-set(url('/media/img/img-office-team-1920.avif') type('image/avif'), url('/media/img/img-office-team-1920.jpg') type('image/jpeg'));
-  background-blend-mode: multiply, normal, normal;
-  background-size: cover;
-  background-position: center 35%;
+  background-image: var(--sky-gradient);
 }
-:root[data-skin='white-red'] body .hero.intro-complete .hero-inner {
-  padding-top: calc(var(--header-h) + clamp(3rem, 2rem + 4svh, 5rem));
-}
-:root[data-skin='white-red'] .hero .hero-inner {
+/* hero-inner is not a stacking context here (it is only raised above the 3D art), so the skyline blends with the
+   hero's gradient. */
+:root[data-skin='white-red'] body .hero.band-night .hero-inner {
+  --hero-top: calc(var(--header-h) + clamp(3rem, 1.5rem + 5svh, 5.5rem));
+  --strip-gap: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+  z-index: auto;
   justify-items: start;
+  row-gap: 1.25rem;
+  padding-top: var(--hero-top);
+  padding-bottom: 0;
   text-align: left;
-  column-gap: clamp(2.5rem, 1rem + 4vw, 5rem);
 }
 :root[data-skin='white-red'] .hero .hero-copy {
   justify-items: start;
@@ -338,59 +337,92 @@
   border-radius: 2px;
   background: #ffffff;
 }
-:root[data-skin='white-red'] .hero .hero-ctas,
+:root[data-skin='white-red'] .hero .hero-copy .hero-title {
+  max-width: none;
+  font-size: clamp(2.25rem, 0.5rem + 4.4vw, 4.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+:root[data-skin='white-red'] .hero .hero-sub {
+  max-width: 40ch;
+  margin-top: 1.25rem;
+  font-size: 1.125rem;
+}
+:root[data-skin='white-red'] .hero .hero-ctas {
+  justify-content: flex-start;
+  margin-top: 0.75rem;
+}
+/* The service links are the original's pills: white outline on red, filled white on hover. */
 :root[data-skin='white-red'] .hero .hero-specialties {
   justify-content: flex-start;
+  gap: 0.5rem;
+  margin-top: 0;
+}
+:root[data-skin='white-red'] .hero .hero-specialties a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: 0.3rem 0.85rem;
+  border: 1px solid color-mix(in oklch, white 32%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklch, white 6%, transparent);
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 550;
+  text-decoration: none;
+  transition: background-color 160ms var(--ease-out-quart), color 160ms var(--ease-out-quart);
+}
+:root[data-skin='white-red'] .hero .hero-specialties a:hover {
+  background: #ffffff;
+  color: var(--color-crimson-600);
+}
+/* Three tiers of action: the filled pill, the outline pill (a firmer outline than the chips), the quiet chips. */
+:root[data-skin='white-red'] .hero .btn-secondary {
+  border-color: color-mix(in oklch, white 72%, transparent);
+}
+@media (max-width: 479px) {
+  /* One swipeable row of chips on phones. */
+  :root[data-skin='white-red'] .hero .hero-specialties {
+    flex-wrap: nowrap;
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, black 85%, transparent);
+    mask-image: linear-gradient(90deg, black 85%, transparent);
+  }
+  :root[data-skin='white-red'] .hero .hero-specialties a {
+    flex: none;
+  }
+}
+/* The skyline (hero-city crops in Hero.astro: the greyscale tone curve is baked in, so the sky is black and screens to
+   pure crimson, and the lit tower and city add light). Each crop has the waterline at 92% of its height, so it stands
+   on the client strip; the desktop crop has the CN Tower at 55% across. Phones: a wide band under the actions. */
+:root[data-skin='white-red'] .hero .hero-city {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  justify-self: stretch;
+  height: clamp(9rem, 42vw, 12rem);
+  margin-inline: calc(50% - 50vw);
+  margin-bottom: calc(-1 * var(--strip-gap) - 1.25rem);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, transparent, black 35%, black 94%, transparent);
+  mask-image: linear-gradient(180deg, transparent, black 35%, black 94%, transparent);
+}
+:root[data-skin='white-red'] .hero .hero-city-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 92%;
 }
 :root[data-skin='white-red'] .hero .marquee-compact .marquee-head {
   width: min(100% - 2 * var(--gutter), 1240px);
   margin-inline: auto;
   text-align: left;
-}
-@media (min-width: 1024px) {
-  :root[data-skin='white-red'] .hero .hero-inner {
-    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-    grid-template-areas:
-      'location .'
-      'title sub'
-      'title ctas'
-      'title links'
-      'clients clients';
-    grid-template-rows: auto auto auto 1fr auto;
-    row-gap: 1.25rem;
-    align-items: start;
-  }
-  :root[data-skin='white-red'] .hero .hero-copy {
-    display: contents;
-  }
-  :root[data-skin='white-red'] .hero .hero-location {
-    grid-area: location;
-    margin-bottom: 0.25rem;
-  }
-  :root[data-skin='white-red'] .hero .hero-copy .hero-title {
-    grid-area: title;
-    align-self: start;
-    margin-top: -0.1em;
-    max-width: none;
-    font-size: clamp(3rem, 1rem + 3.6vw, 4.5rem);
-    line-height: 1.02;
-  }
-  :root[data-skin='white-red'] .hero .hero-sub {
-    grid-area: sub;
-    margin-top: 0;
-    max-width: 46ch;
-  }
-  :root[data-skin='white-red'] .hero .hero-ctas {
-    grid-area: ctas;
-    margin-top: 0.5rem;
-  }
-  :root[data-skin='white-red'] .hero .hero-specialties {
-    grid-area: links;
-    margin-top: 0;
-  }
-  :root[data-skin='white-red'] .hero .marquee-compact {
-    grid-area: clients;
-  }
 }
 :root[data-skin='white-red'] .hero .marquee-compact {
   color-scheme: light;
@@ -398,7 +430,8 @@
   --text-muted: var(--color-air-copy);
   --line: var(--color-mist-200);
   --focus: var(--color-crimson-700);
-  margin-top: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+  position: relative;
+  margin-top: var(--strip-gap);
   justify-self: stretch;
   width: auto;
   margin-inline: calc(50% - 50vw);
@@ -407,16 +440,106 @@
   background: #ffffff;
   color: var(--text);
 }
-:root[data-skin='white-red'] .hero .hero-inner {
-  padding-bottom: 0;
+@media (min-width: 1024px) {
+  :root[data-skin='white-red'] body .hero.band-night .hero-inner {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-areas:
+      'location city'
+      'title city'
+      'sub city'
+      'ctas city'
+      'links city'
+      'clients clients';
+    grid-template-rows: auto auto auto auto 1fr auto;
+    column-gap: 3rem;
+    align-items: start;
+  }
+  :root[data-skin='white-red'] .hero .hero-copy {
+    display: contents;
+  }
+  :root[data-skin='white-red'] .hero .hero-location {
+    grid-area: location;
+  }
+  :root[data-skin='white-red'] .hero .hero-copy .hero-title {
+    grid-area: title;
+  }
+  :root[data-skin='white-red'] .hero .hero-sub {
+    grid-area: sub;
+    margin-top: 0;
+  }
+  :root[data-skin='white-red'] .hero .hero-ctas {
+    grid-area: ctas;
+  }
+  :root[data-skin='white-red'] .hero .hero-specialties {
+    grid-area: links;
+  }
+  /* Desktop: the skyline fills the right of the hero, from under the header to the client strip and out to the
+     viewport edge, fading in from the left so the copy column stays clean gradient. */
+  :root[data-skin='white-red'] .hero .hero-city {
+    grid-area: city;
+    align-self: stretch;
+    height: auto;
+    margin: calc(-1 * var(--hero-top)) calc(-1 * max(var(--gutter), (100vw - 1240px) / 2)) calc(-1 * var(--strip-gap) - 1.25rem) calc(-1 * clamp(2rem, 6vw, 8rem));
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 45%, black 94%, transparent), linear-gradient(180deg, transparent 4%, black 22%, black 94%, transparent);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(90deg, transparent, black 45%, black 94%, transparent), linear-gradient(180deg, transparent 4%, black 22%, black 94%, transparent);
+    mask-composite: intersect;
+  }
+  :root[data-skin='white-red'] .hero .hero-city-img {
+    object-position: 55% 92%;
+  }
+  :root[data-skin='white-red'] .hero .marquee-compact {
+    grid-area: clients;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-skin='white-red'] .hero :is(.hero-location, .hero-sub, .hero-sub-short, .hero-ctas, .hero-specialties) {
+    animation: hero-rise 900ms var(--ease-out-expo) both;
+  }
+  /* The headline is the largest paint, so it only moves; it is never transparent. */
+  :root[data-skin='white-red'] .hero .hero-title {
+    animation: hero-lift 900ms var(--ease-out-expo) 80ms both;
+  }
+  :root[data-skin='white-red'] .hero :is(.hero-sub, .hero-sub-short) { animation-delay: 200ms; }
+  :root[data-skin='white-red'] .hero .hero-ctas { animation-delay: 300ms; }
+  :root[data-skin='white-red'] .hero .hero-specialties { animation-delay: 400ms; }
+  :root[data-skin='white-red'] .hero .hero-city {
+    animation: hero-city-in 900ms var(--ease-out-quart) both;
+  }
+  :root[data-skin='white-red'] .hero .hero-city-img {
+    animation: hero-city-on 1600ms var(--ease-out-quart) 300ms both;
+  }
+}
+@keyframes hero-lift {
+  from {
+    transform: translate3d(0, 18px, 0);
+  }
+}
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+}
+@keyframes hero-city-in {
+  from {
+    opacity: 0;
+  }
+}
+/* The city lights come up: the photo's own brightness rises to its black point. */
+@keyframes hero-city-on {
+  from {
+    filter: brightness(0.35);
+  }
 }
 
 /* ---------- More crimson: the original's red and white alternation ---------- */
-/* The user asked for more red. Like gforceit.ca (crimson hero, white, crimson "Why Choose" band, white, rose, crimson
-   footer), sections alternate: these become crimson bands with white type. Their cards and panels take the same
+/* The user asked for more red on the home page (only the home page: inner pages keep their banner, white and
+   rose-white sections). Like gforceit.ca (crimson hero, white, crimson "Why Choose" band, white, rose, crimson
+   footer), home sections alternate: these become crimson bands with white type. Their cards and panels take the same
    white-on-crimson tokens the crimson banners use (the DawnBand panel keeps its own white surface). IDs, because
    these sections also carry sheet/band-dawn classes whose sky-page backgrounds are specific. */
-:root[data-skin='white-red'] :is(#morning, #training, #tools, #cybersecurity, #formats, #next-steps, #what-it-checks) {
+:root[data-skin='white-red'] :is(#morning, #training, #tools) {
   color-scheme: dark;
   --bg: var(--color-crimson-500);
   --surface: color-mix(in oklch, white 10%, transparent);
@@ -442,7 +565,7 @@
   background-image: var(--sky-gradient);
 }
 /* The section after a crimson band needs no hairline: the colour change divides them. */
-:root[data-skin='white-red'] body :is(#morning, #training, #tools, #cybersecurity, #formats, #next-steps, #what-it-checks) + .sheet {
+:root[data-skin='white-red'] body :is(#morning, #training, #tools) + .sheet {
   border-top: 0;
 }
 
